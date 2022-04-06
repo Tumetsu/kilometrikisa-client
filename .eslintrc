@@ -10,5 +10,8 @@
   ],
   "env": {
     "browser": false
+  },
+  "rules": {
+    "@typescript-eslint/no-var-requires": "off" // curl library has to be imported with old require style
   }
 }

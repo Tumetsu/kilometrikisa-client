@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest",
+    "test": "export $(cat .env | xargs) && jest",
     "lint": "eslint ./src --ext .ts",
     "lint:fix": "eslint ./src --ext .ts --fix",
     "prettier-fix": "prettier --write --config .prettierrc ./",
@@ -40,5 +40,9 @@
   "bugs": {
     "url": "https://gitlab.com/tumetsu/kilometrikisa-client/issues"
   },
-  "homepage": "https://gitlab.com/tumetsu/kilometrikisa-client#readme"
+  "homepage": "https://gitlab.com/tumetsu/kilometrikisa-client#readme",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "curlrequest": "^1.0.1"
+  }
 }
