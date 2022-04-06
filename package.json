@@ -1,0 +1,32 @@
+{
+  "name": "kilometrikisa-client",
+  "version": "0.0.1",
+  "description": "Provide API to log in and posting data to the kilometrikisa.fi",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^4.6.3"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/tumetsu/kilometrikisa-client.git"
+  },
+  "keywords": [
+    "kilometrikisa",
+    "client",
+    "api"
+  ],
+  "author": "Tuomas Salmi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/tumetsu/kilometrikisa-client/issues"
+  },
+  "homepage": "https://gitlab.com/tumetsu/kilometrikisa-client#readme"
+}
