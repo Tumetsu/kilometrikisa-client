@@ -1,3 +1,6 @@
-import { login, isLoggedIn } from './auth/auth';
+import axios from 'axios';
+import { curlClient } from './utils/curl';
+import { KilometrikisaAuth } from './auth/auth';
 
-export { login, isLoggedIn };
+const authClient = new KilometrikisaAuth(axios, curlClient);
+export default { login: authClient.login, isLoggedIn: authClient.isLoggedIn };
