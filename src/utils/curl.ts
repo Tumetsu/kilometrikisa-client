@@ -13,8 +13,14 @@ export interface Curl {
   post: (url: string, data: unknown, options: CurlOptions) => Promise<string[]>;
 }
 
+type StatusData = Record<string, unknown>;
+interface ResponseStatus {
+  code: number;
+  statusData?: StatusData;
+}
+
 export class HttpError extends Error {
-  constructor(public statusCode: number) {
+  constructor(public statusCode: number, public statusData?: StatusData) {
     super();
   }
 }
@@ -80,17 +86,23 @@ async function executeRequest(options: Record<string, unknown>): Promise<string[
     });
   });
 
-  const statusCode = parseStatusCodeFromResponse(responseRows[0]);
-  checkStatusCodeState(statusCode);
+  const status = parseResponseStatus(responseRows);
+  checkStatusCodeState(status);
   return responseRows;
 }
 
-function parseStatusCodeFromResponse(line: string) {
-  return parseInt(line.match(/HTTP\/1.1 (\d\d\d)/)?.[1] ?? '500');
+function parseResponseStatus(lines: string[]): ResponseStatus {
+  const code = parseInt(lines[0].match(/HTTP\/1.1 (\d\d\d)/)?.[1] ?? '500');
+  const statusData = JSON.parse(lines.find(line => line.includes('response')) ?? 'null');
+
+  return {
+    code,
+    statusData,
+  };
 }
 
-function checkStatusCodeState(statusCode: number) {
-  if (statusCode >= 400) {
-    throw new HttpError(statusCode);
+function checkStatusCodeState(status: ResponseStatus) {
+  if (status.code >= 400) {
+    throw new HttpError(status.code, status.statusData);
   }
 }
