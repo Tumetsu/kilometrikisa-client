@@ -1,5 +1,4 @@
 import { KilometrikisaAuth } from './auth';
-import axios from 'axios';
 import { curlClient } from '../utils/curl';
 import {
   failureSubmitResponse,
@@ -14,7 +13,7 @@ describe('login flow against production', () => {
   const username = process?.env['KILOMETRIKISA_USERNAME'] ?? '';
   const password = process?.env['KILOMETRIKISA_PASSWORD'] ?? '';
 
-  const auth = new KilometrikisaAuth(axios, curlClient);
+  const auth = new KilometrikisaAuth(curlClient);
 
   it('should log in and verify that user is logged in', async () => {
     const credentials = await auth.login(username, password);
@@ -26,23 +25,27 @@ describe('login flow against production', () => {
 });
 
 describe('login flow', () => {
-  const mockAxios = {
-    get: jest.fn().mockResolvedValue({
-      headers: {
-        'set-cookie': ['csrftoken=somecsrftoken;'],
-      },
-    }),
+  const mockCsrfTokenResponse = ['Set-Cookie: csrftoken=somecsrftoken;'];
+
+  let mockCurl: {
+    get: jest.Mock;
+    post: jest.Mock;
   };
 
-  const mockCurl = {
-    get: jest.fn(),
-    post: jest.fn(),
-  };
+  let auth: KilometrikisaAuth;
 
-  const auth = new KilometrikisaAuth(mockAxios, mockCurl);
+  beforeEach(() => {
+    mockCurl = {
+      get: jest.fn(),
+      post: jest.fn(),
+    };
+
+    auth = new KilometrikisaAuth(mockCurl);
+  });
 
   describe('login', () => {
     it('should return credentials', async () => {
+      mockCurl.get.mockReturnValueOnce(mockCsrfTokenResponse);
       mockCurl.post.mockReturnValueOnce(successfulSubmitResponse);
 
       const credentials = await auth.login('username', 'hunter2');
@@ -51,7 +54,8 @@ describe('login flow', () => {
     });
 
     it('should throw an error if extracting CSRF token from cookie failed', async () => {
-      mockAxios.get.mockReturnValueOnce({
+      mockCurl.get.mockReturnValueOnce(['Set-Cookie: no token here']);
+      mockCurl.get.mockReturnValueOnce({
         headers: {
           'set-cookie': ['no token here;'], // Does not contain a proper CSRF token
         },
@@ -63,6 +67,7 @@ describe('login flow', () => {
     });
 
     it('should throw an error if extracting session id failed', async () => {
+      mockCurl.get.mockReturnValueOnce(mockCsrfTokenResponse);
       mockCurl.post.mockReturnValueOnce(failureSubmitResponse);
       await expect(auth.login('username', 'hunter2')).rejects.toThrow(
         'Could not get token and sessionId from the login request'

@@ -9,7 +9,7 @@ const CURL_OPTIONS = {
 };
 
 export interface Curl {
-  get: (url: string, options: CurlOptions) => Promise<string[]>;
+  get: (url: string, options?: CurlOptions) => Promise<string[]>;
   post: (url: string, data: unknown, options: CurlOptions) => Promise<string[]>;
 }
 
@@ -26,7 +26,7 @@ export class HttpError extends Error {
 }
 
 interface CurlOptions {
-  headers: {
+  headers?: {
     Cookie: string;
   };
   referer?: string;
@@ -63,7 +63,7 @@ export const curlClient: Curl = {
    * @param url
    * @param options
    */
-  get: function (url: string, options: CurlOptions): Promise<string[]> {
+  get: function (url: string, options: CurlOptions = {}): Promise<string[]> {
     const _options = {
       ...CURL_OPTIONS,
       method: 'GET',

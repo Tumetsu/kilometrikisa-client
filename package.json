@@ -42,7 +42,6 @@
   },
   "homepage": "https://gitlab.com/tumetsu/kilometrikisa-client#readme",
   "dependencies": {
-    "axios": "^0.26.1",
     "curlrequest": "^1.0.1"
   }
 }

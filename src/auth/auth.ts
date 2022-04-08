@@ -7,16 +7,8 @@ export interface LoginCredentials {
   sessionId: string;
 }
 
-export interface HttpClient {
-  get: (url: string) => Promise<{
-    headers: {
-      'set-cookie': string[];
-    };
-  }>;
-}
-
 export class KilometrikisaAuth {
-  constructor(private httpClient: HttpClient, private curl: Curl) {}
+  constructor(private curl: Curl) {}
 
   /**
    * Try to login in to the Kilometrikisa by using username and password. If successful, return
@@ -26,23 +18,25 @@ export class KilometrikisaAuth {
    * @param password
    */
   public async login(username: string, password: string): Promise<LoginCredentials> {
-    const loginPage = await this.httpClient.get(KILOMETRIKISA_LOGIN_URL);
-    const csrfToken = this.getCsrfTokenFromCookieHeader(loginPage.headers['set-cookie'] ?? ['']);
+    const csrfToken = await this.fetchCsrfToken();
 
     return this.submitLoginDetails(username, password, csrfToken);
   }
 
-  private getCsrfTokenFromCookieHeader(setCookieRows: string[]) {
-    const csrfToken = this.getTokenFromString(setCookieRows[0], 'csrftoken');
+  private getTokenFromString(text: string, tokenName: string) {
+    return text.match(`.*${tokenName}=(.*?);`)?.[1];
+  }
+
+  private async fetchCsrfToken() {
+    const responseRows = await this.curl.get(KILOMETRIKISA_LOGIN_URL);
+    const cookieRow = responseRows.find(row => row.includes('Set-Cookie:'));
+    const csrfToken = this.getTokenFromString(cookieRow ?? '', 'csrftoken');
+
     if (!csrfToken) {
       throw new Error('Could not extract CSRF token from login request');
     }
 
     return csrfToken;
-  }
-
-  private getTokenFromString(text: string, tokenName: string) {
-    return text.match(`.*${tokenName}=(.*?);`)?.[1];
   }
 
   private async submitLoginDetails(
