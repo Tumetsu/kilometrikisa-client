@@ -13,12 +13,18 @@ export interface Curl {
   post: (url: string, data: unknown, options: CurlOptions) => Promise<string[]>;
 }
 
+export class HttpError extends Error {
+  constructor(public statusCode: number) {
+    super();
+  }
+}
+
 interface CurlOptions {
   headers: {
     Cookie: string;
   };
+  referer?: string;
 }
-
 export const curlClient: Curl = {
   /**
    * An utility function to wrap curlrequest post to promise and avoid copypasting all the constant
@@ -40,14 +46,7 @@ export const curlClient: Curl = {
       ...options,
     };
 
-    return new Promise((resolve, reject) => {
-      curl.request(_options, function (err: unknown, stdout: string) {
-        if (err) {
-          return reject(err);
-        }
-        resolve(stdout.split('\n'));
-      });
-    });
+    return executeRequest(_options);
   },
 
   /**
@@ -67,13 +66,31 @@ export const curlClient: Curl = {
       ...options,
     };
 
-    return new Promise((resolve, reject) => {
-      curl.request(_options, function (err: unknown, stdout: string) {
-        if (err) {
-          return reject(err);
-        }
-        resolve(stdout.split('\n'));
-      });
-    });
+    return executeRequest(_options);
   },
 };
+
+async function executeRequest(options: Record<string, unknown>): Promise<string[]> {
+  const responseRows: string[] = await new Promise((resolve, reject) => {
+    curl.request(options, function (err: unknown, stdout: string) {
+      if (err) {
+        return reject(err);
+      }
+      resolve(stdout.split('\n'));
+    });
+  });
+
+  const statusCode = parseStatusCodeFromResponse(responseRows[0]);
+  checkStatusCodeState(statusCode);
+  return responseRows;
+}
+
+function parseStatusCodeFromResponse(line: string) {
+  return parseInt(line.match(/HTTP\/1.1 (\d\d\d)/)?.[1] ?? '500');
+}
+
+function checkStatusCodeState(statusCode: number) {
+  if (statusCode >= 400) {
+    throw new HttpError(statusCode);
+  }
+}
