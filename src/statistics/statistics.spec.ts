@@ -16,7 +16,7 @@ describe('statistics', () => {
     it('should fetch team member statistics', async () => {
       const credentials = await client.login(username, password);
       const results = await getTeamMemberStatistics(teamSlug, competitionSlug, credentials);
-      expect(results.length).toBeGreaterThan(0);
+      expect(results.distanceStatistics.length).toBeGreaterThan(0);
     });
   });
 });

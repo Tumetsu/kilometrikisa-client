@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
 import { CheerioAPI } from 'cheerio';
 
-export interface TeamMemberStatistics {
+export interface TeamMemberDistanceStatistics {
   placement: number;
   name: string;
   email: string;
@@ -11,19 +11,49 @@ export interface TeamMemberStatistics {
   totalCyclingDays: number;
 }
 
-export function parseKilometrikisaTeamMemberStatistics(htmlData: string) {
-  const $ = cheerio.load(htmlData);
-  const distanceTableData = getDistanceTableData($);
-  return distanceTableData;
+export interface TeamMemberTimeStatistics {
+  placement: number;
+  name: string;
+  email: string;
+  time: {
+    hours: number;
+    minutes: number;
+  };
+  totalCyclingDays: number;
 }
 
-function getDistanceTableData($: CheerioAPI): TeamMemberStatistics[] {
+export function parseKilometrikisaTeamMemberStatistics(htmlData: string) {
+  const $ = cheerio.load(htmlData);
+  const distanceStatistics = getDistanceTableData($);
+  const timeStatistics = getMinuteTableData($);
+  return {
+    distanceStatistics,
+    timeStatistics,
+  };
+}
+
+function getMinuteTableData($: CheerioAPI): TeamMemberTimeStatistics[] {
+  const minuteTable = getTableElement($, 'Minuuttikisa');
+
+  const minuteHeadings = getTableHeadings($, minuteTable);
+  const minuteRows = getTableRows($, minuteTable);
+
+  return transformTableToObject(
+    minuteHeadings,
+    minuteRows
+  ) as unknown as TeamMemberTimeStatistics[];
+}
+
+function getDistanceTableData($: CheerioAPI): TeamMemberDistanceStatistics[] {
   const distanceTable = getTableElement($, 'Kilometrikisa');
 
   const distanceHeadings = getTableHeadings($, distanceTable);
   const distanceRows = getTableRows($, distanceTable);
 
-  return transformTableToObject(distanceHeadings, distanceRows);
+  return transformTableToObject(
+    distanceHeadings,
+    distanceRows
+  ) as unknown as TeamMemberDistanceStatistics[];
 }
 
 function getTableElement($: cheerio.CheerioAPI, title: string) {
@@ -43,6 +73,7 @@ const mapTableHeadingStringsToKeys: Record<string, string> = {
   'Km (lihas)': 'distanceByRegularBike',
   'Km (sähkö)': 'distanceByEbike',
   'Ajopäivät': 'totalCyclingDays',
+  'Aika (tunnit ja minuutit)': 'time',
 };
 
 function getTableHeadings($: cheerio.CheerioAPI, table: cheerio.Cheerio<cheerio.Element>) {
@@ -74,8 +105,15 @@ function getTableRow($: cheerio.CheerioAPI, row: cheerio.Cheerio<cheerio.Element
     .get();
 }
 
-function transformTableToObject(headings: string[], dataRows: string[][]): TeamMemberStatistics[] {
+function transformTableToObject(headings: string[], dataRows: string[][]) {
   function castToCorrectType(value: string) {
+    // First check if the value is a string which contains hours and minutes
+    const time = parseTimeString(value);
+    if (time) {
+      return time;
+    }
+
+    // Then it is either number or a string
     const number = parseFloat(value);
     if (Number.isNaN(number)) {
       return value;
@@ -84,12 +122,26 @@ function transformTableToObject(headings: string[], dataRows: string[][]): TeamM
   }
 
   return dataRows.map(row => {
-    const rowObj: Record<string, string | number> = {};
+    const rowObj: Record<string, string | number | { hours: number; minutes: number }> = {};
 
     // TODO: Refactor dynamic object creation to be more type friendly to avoid force casting to the final interface
     headings.forEach((key, index) => {
       rowObj[key] = castToCorrectType(row[index]);
     });
-    return rowObj as unknown as TeamMemberStatistics;
+    return rowObj;
   });
+}
+
+function parseTimeString(text: string) {
+  if (!text.includes('min')) {
+    return null; // Not a kilometrikisa timestring
+  }
+
+  const hours = parseInt(text.match(/(\d+) h/)?.[1] ?? '0', 10);
+  const minutes = parseInt(text.match(/(\d+) min/)?.[1] ?? '0', 10);
+
+  return {
+    hours,
+    minutes,
+  };
 }
