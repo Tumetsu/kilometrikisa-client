@@ -2,38 +2,17 @@ import * as cheerio from 'cheerio';
 
 interface DataValuePair {
   title: string;
-  value: string;
+  valueAndUnit: string;
 }
 
-export interface TeamDataItem {
-  type: TeamDataType;
-  unit: TeamDataUnits;
-  value: number | undefined;
-}
-
-/**
- * Identifier for the each data type the parser will return.
- */
-export enum TeamDataType {
-  SMALL_SERIES_PLACEMENT = 'SMALL_SERIES_PLACEMENT',
-  DISTANCE_PER_PERSON = 'DISTANCE_PER_PERSON',
-  TOTAL_DISTANCE = 'TOTAL_DISTANCE',
-  DAY_AVERAGE_PER_PERSON = 'DAY_AVERAGE_PER_PERSON',
-  TOTAL_DAYS = 'TOTAL_DAYS',
-  SAVED_GAS = 'SAVED_GAS',
-  SAVED_CO2 = 'SAVED_CO2',
-}
-
-/**
- * Identifier for the each data unit the parser will return.
- */
-export enum TeamDataUnits {
-  KM = 'KM',
-  KM_PER_PERSON = 'KM/PERSON',
-  DAY_PER_PERSON = 'DAY/PERSON',
-  LITER = 'LITER',
-  KG = 'KG',
-  NONE = 'NONE',
+export interface TeamStatistics {
+  seriesPlacement: number | undefined;
+  distancePerPerson: number;
+  totalDistance: number;
+  daysPerPerson: number;
+  totalDays: number;
+  savedGas: number;
+  savedCO2: number;
 }
 
 export class TeamPageParsingError extends Error {
@@ -42,7 +21,7 @@ export class TeamPageParsingError extends Error {
   }
 }
 
-export function parseKilometrikisaTeamPageStatistics(htmlData: string): TeamDataItem[] {
+export function parseKilometrikisaTeamPageStatistics(htmlData: string): TeamStatistics {
   const $ = cheerio.load(htmlData);
 
   const dataItemElements = $('.team-contest-table .data-item');
@@ -56,22 +35,8 @@ export function parseKilometrikisaTeamPageStatistics(htmlData: string): TeamData
     throw new TeamPageParsingError();
   }
 
-  return dataValues.map(convertDataToTypedObjects);
+  return convertDataToTypedObject(dataValues);
 }
-
-/**
- * Map html element titles to enums. Note that these can break if Kilometrikisa edits
- * the html page and changes the labels!
- */
-const stringTitlesToTeamDataType: Record<string, TeamDataType> = {
-  'Piensarjan sijoitus': TeamDataType.SMALL_SERIES_PLACEMENT,
-  'Joukkueen keskiarvo': TeamDataType.DISTANCE_PER_PERSON,
-  'Kilometrit yhteensä': TeamDataType.TOTAL_DISTANCE,
-  'Pyöräilypäivien keskiarvo': TeamDataType.DAY_AVERAGE_PER_PERSON,
-  'Pyöräilypäivät yhteensä': TeamDataType.TOTAL_DAYS,
-  'Bensaa säästetty': TeamDataType.SAVED_GAS,
-  'CO2 säästetty': TeamDataType.SAVED_CO2,
-};
 
 /**
  * Extract string values from team page data elements. Format of the DOM element is following:
@@ -90,28 +55,35 @@ function extractDataFromElement($: cheerio.CheerioAPI, element: cheerio.Element)
 
   return {
     title: titleContent.trim(),
-    value: valueContent.trim(),
+    valueAndUnit: valueContent.trim(),
   };
 }
 
 /**
- * Map html element data units to enums. Note that these can break if Kilometrikisa edits
- * the html page and changes the unit labels!
+ * Map page titles to object keys we are going to return from the API. Note that the keys of this object
+ * might change if Kilometrikisa website is modified.
  */
-const stringUnitsToTeamDataUnits: Record<string, TeamDataUnits> = {
-  'km': TeamDataUnits.KM,
-  'km/hlö': TeamDataUnits.KM_PER_PERSON,
-  'pv/hlö': TeamDataUnits.DAY_PER_PERSON,
-  'litraa': TeamDataUnits.LITER,
-  'kg': TeamDataUnits.KG,
+const stringTitlesToKeys: Record<string, string> = {
+  'Piensarjan sijoitus': 'seriesPlacement',
+  'Joukkueen keskiarvo': 'distancePerPerson',
+  'Kilometrit yhteensä': 'totalDistance',
+  'Pyöräilypäivien keskiarvo': 'daysPerPerson',
+  'Pyöräilypäivät yhteensä': 'totalDays',
+  'Bensaa säästetty': 'savedGas',
+  'CO2 säästetty': 'savedCO2',
 };
 
-function convertDataToTypedObjects(pair: DataValuePair): TeamDataItem {
-  const [value, unit] = pair.value.split(' ');
+function convertDataToTypedObject(pairs: DataValuePair[]): TeamStatistics {
+  function extractValue(valueAndUnit: string) {
+    const [value] = valueAndUnit.split(' ');
+    return value ? parseFloat(value) : undefined;
+  }
 
-  return {
-    type: stringTitlesToTeamDataType[pair.title],
-    unit: unit ? stringUnitsToTeamDataUnits[unit] : TeamDataUnits.NONE,
-    value: value ? parseFloat(value) : undefined,
-  };
+  const result: Record<string, number | undefined> = {};
+  pairs.forEach(({ title, valueAndUnit }) => {
+    const key = stringTitlesToKeys[title];
+    result[key] = extractValue(valueAndUnit);
+  });
+
+  return result as unknown as TeamStatistics;
 }

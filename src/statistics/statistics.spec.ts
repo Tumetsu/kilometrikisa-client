@@ -10,7 +10,7 @@ describe('statistics', () => {
 
     it('should fetch team statistics', async () => {
       const results = await getTeamStatistics('vincit-forza');
-      expect(results.length).toBeGreaterThan(0);
+      expect(results).not.toBeNull();
     });
 
     it('should fetch team member statistics', async () => {
