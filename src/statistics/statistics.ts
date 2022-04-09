@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { parseKilometrikisaTeamPageStatistics } from './html-parser/html-parser';
+import { parseKilometrikisaTeamPageStatistics } from './html-parser/team-parser/team-parser';
 
 const kilometrikisaTeamPageBaseUrl = 'https://www.kilometrikisa.fi/teams/';
 

@@ -3,7 +3,7 @@ import {
   TeamDataType,
   TeamDataUnits,
   TeamPageParsingError,
-} from './html-parser';
+} from './team-parser';
 import { teamPageHtmlMock } from './kilometrikisa-team-page.mocks';
 
 describe('html-parser', () => {
