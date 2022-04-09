@@ -4,7 +4,7 @@ import { CheerioAPI } from 'cheerio';
 export interface TeamMemberDistanceStatistics {
   placement: number;
   name: string;
-  email: string;
+  email?: string | null;
   totalDistance: number;
   distanceByRegularBike: number;
   distanceByEbike: number;
@@ -118,6 +118,9 @@ function getTableRow($: cheerio.CheerioAPI, row: cheerio.Cheerio<cheerio.Element
 
 function transformTableToObject(headings: string[], dataRows: string[][]) {
   function castToCorrectType(value: string) {
+    if (value === '') {
+      return null;
+    }
     // First check if the value is a string which contains hours and minutes
     const time = parseTimeString(value);
     if (time) {
@@ -133,7 +136,7 @@ function transformTableToObject(headings: string[], dataRows: string[][]) {
   }
 
   return dataRows.map(row => {
-    const rowObj: Record<string, string | number | { hours: number; minutes: number }> = {};
+    const rowObj: Record<string, string | null | number | { hours: number; minutes: number }> = {};
 
     // TODO: Refactor dynamic object creation to be more type friendly to avoid force casting to the final interface
     headings.forEach((key, index) => {

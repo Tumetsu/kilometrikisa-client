@@ -12,7 +12,7 @@ describe('html-parser', () => {
         {
           placement: 1,
           name: 'Testi Testersson',
-          email: '',
+          email: null,
           totalDistance: 1691,
           distanceByRegularBike: 1691,
           distanceByEbike: 0,
@@ -21,7 +21,7 @@ describe('html-parser', () => {
         {
           placement: 2,
           name: 'Paula Pyöräilijä',
-          email: '',
+          email: null,
           totalDistance: 1531,
           distanceByRegularBike: 844,
           distanceByEbike: 687,
@@ -30,7 +30,7 @@ describe('html-parser', () => {
         {
           placement: 3,
           name: 'Tsygä Tsygäilijä',
-          email: '',
+          email: null,
           totalDistance: 1513,
           distanceByRegularBike: 1513,
           distanceByEbike: 0,
@@ -42,7 +42,7 @@ describe('html-parser', () => {
         {
           placement: 1,
           name: 'Testi Testersson',
-          email: '',
+          email: null,
           time: {
             hours: 79,
             minutes: 43,
@@ -52,7 +52,7 @@ describe('html-parser', () => {
         {
           placement: 2,
           name: 'Tsygä Tsygäilijä',
-          email: '',
+          email: null,
           time: {
             hours: 74,
             minutes: 30,
@@ -62,7 +62,7 @@ describe('html-parser', () => {
         {
           placement: 3,
           name: 'Paula Pyöräilijä',
-          email: '',
+          email: null,
           time: {
             hours: 54,
             minutes: 0,
