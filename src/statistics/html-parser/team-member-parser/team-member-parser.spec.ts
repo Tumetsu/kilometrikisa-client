@@ -1,4 +1,7 @@
-import { parseKilometrikisaTeamMemberStatistics } from './team-member-parser';
+import {
+  parseKilometrikisaTeamMemberStatistics,
+  TeamMemberStatisticsParsingError,
+} from './team-member-parser';
 import { teamMemberPageMock } from './kilometrikisa-team-member-page.mocks';
 
 describe('html-parser', () => {
@@ -67,6 +70,12 @@ describe('html-parser', () => {
           totalCyclingDays: 34,
         },
       ]);
+    });
+
+    it('should throw an error if the parsing failed', () => {
+      expect(() => parseKilometrikisaTeamMemberStatistics('not valid html')).toThrow(
+        TeamMemberStatisticsParsingError
+      );
     });
   });
 });

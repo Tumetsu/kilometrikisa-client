@@ -22,10 +22,21 @@ export interface TeamMemberTimeStatistics {
   totalCyclingDays: number;
 }
 
+export class TeamMemberStatisticsParsingError extends Error {
+  constructor() {
+    super('Could not parse team member data from Kilometrikisa team page.');
+  }
+}
+
 export function parseKilometrikisaTeamMemberStatistics(htmlData: string) {
   const $ = cheerio.load(htmlData);
   const distanceStatistics = getDistanceTableData($);
   const timeStatistics = getMinuteTableData($);
+
+  if (!distanceStatistics.length && !timeStatistics.length) {
+    throw new TeamMemberStatisticsParsingError();
+  }
+
   return {
     distanceStatistics,
     timeStatistics,
