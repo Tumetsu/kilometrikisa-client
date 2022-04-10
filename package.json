@@ -1,6 +1,6 @@
 {
   "name": "kilometrikisa-client",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Provide API to log in and posting and scraping data to and from the kilometrikisa.fi",
   "author": "Tuomas Salmi",
   "license": "MIT",
