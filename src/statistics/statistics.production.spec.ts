@@ -1,5 +1,5 @@
 import { getTeamMemberStatistics, getTeamStatistics } from './statistics';
-import client from '../index';
+import { login } from '../index';
 
 describe('statistics', () => {
   describe('fetch team statistics from production', () => {
@@ -14,7 +14,7 @@ describe('statistics', () => {
     });
 
     it('should fetch team member statistics', async () => {
-      const credentials = await client.login(username, password);
+      const credentials = await login(username, password);
       const results = await getTeamMemberStatistics(teamSlug, competitionSlug, credentials);
       expect(results.distanceStatistics.length).toBeGreaterThan(0);
     });
