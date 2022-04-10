@@ -56,6 +56,26 @@ describe('login flow', () => {
         'Could not get token and sessionId from the login request'
       );
     });
+
+    it('should throw correct error if the post to the kilometrikisa fails', async () => {
+      mockedAxios.get.mockResolvedValueOnce({
+        headers: {
+          'set-cookie': mockCsrfTokenCookie,
+        },
+      });
+      mockedAxios.post.mockRejectedValueOnce({
+        response: {
+          status: 200, // 200 IS a failure for this request, since we need 302 response for the login.,
+        },
+        isAxiosError: true
+      })
+
+      mockedAxios.isAxiosError.mockReturnValue(true);
+      await expect(login('username', 'hunter2')).rejects.toThrow(
+        'Login failed. Are username and password valid?'
+      )
+      mockedAxios.isAxiosError.mockRestore();
+    });
   });
 
   describe('isLoggedIn', () => {

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { LoginCredentials } from '../auth/auth';
 import { parseKilometrikisaTeamPageStatistics } from './html-parser/team-parser/team-parser';
 import { parseKilometrikisaTeamMemberStatistics } from './html-parser/team-member-parser/team-member-parser';
+import { transformAxiosError } from '../utils/error-handling';
 
 const kilometrikisaTeamPageBaseUrl = 'https://www.kilometrikisa.fi/teams/';
 
@@ -10,8 +11,13 @@ const kilometrikisaTeamPageBaseUrl = 'https://www.kilometrikisa.fi/teams/';
  * @param teamSlug  The name of the team in "slugified" format. You can pick the value from team page url on the kilometrikisa website.
  */
 export async function getTeamStatistics(teamSlug: string) {
-  const teamStatisticsPageResponse = await axios.get(kilometrikisaTeamPageBaseUrl + teamSlug);
-  return parseKilometrikisaTeamPageStatistics(teamStatisticsPageResponse.data);
+  try {
+    const teamStatisticsPageResponse = await axios.get(kilometrikisaTeamPageBaseUrl + teamSlug);
+    return parseKilometrikisaTeamPageStatistics(teamStatisticsPageResponse.data);
+  } catch (err) {
+    transformAxiosError(err, 404, `Team ${teamSlug} could not be found.`);
+    throw err;
+  }
 }
 
 /**
@@ -26,12 +32,21 @@ export async function getTeamMemberStatistics(
   credentials: LoginCredentials
 ) {
   const url = `${kilometrikisaTeamPageBaseUrl}${teamSlug}/${competitionSlug}/`;
-  const teamMemberStatisticsPage = await axios.get(url, {
-    headers: {
-      Referer: url,
-      Cookie: `csrftoken=${credentials.token}; sessionid=${credentials.sessionId};`,
-    },
-  });
+  try {
+    const teamMemberStatisticsPage = await axios.get(url, {
+      headers: {
+        Referer: url,
+        Cookie: `csrftoken=${credentials.token}; sessionid=${credentials.sessionId};`,
+      },
+    });
 
-  return parseKilometrikisaTeamMemberStatistics(teamMemberStatisticsPage.data);
+    return parseKilometrikisaTeamMemberStatistics(teamMemberStatisticsPage.data);
+  } catch (err) {
+    transformAxiosError(
+      err,
+      404,
+      `Team ${teamSlug} for given competition ${competitionSlug} could not be found.`
+    );
+    throw err;
+  }
 }

@@ -17,7 +17,14 @@ export interface LoginCredentials {
 export async function login(username: string, password: string): Promise<LoginCredentials> {
   const csrfToken = await fetchCsrfToken();
 
-  return submitLoginDetails(username, password, csrfToken);
+  try {
+    return await submitLoginDetails(username, password, csrfToken);
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      throw new Error('Login failed. Are username and password valid?');
+    }
+    throw err;
+  }
 }
 
 async function fetchCsrfToken() {
