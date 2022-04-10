@@ -1,52 +1,30 @@
+import axios from 'axios';
 import { KilometrikisaAuth } from './auth';
-import { curlClient } from '../utils/curl';
-import {
-  failureSubmitResponse,
-  isLoggedInResponse,
-  isNotLoggedInResponse,
-  successfulSubmitResponse,
-} from './kilometrikisa-responses.mock';
 
-describe('login flow against production', () => {
-  // NOTE: These tests are ran against the production to verify the integration and requires credentials to be set
-  // to the .env file
-  const username = process?.env['KILOMETRIKISA_USERNAME'] ?? '';
-  const password = process?.env['KILOMETRIKISA_PASSWORD'] ?? '';
-
-  const auth = new KilometrikisaAuth(curlClient);
-
-  it('should log in and verify that user is logged in', async () => {
-    const credentials = await auth.login(username, password);
-    expect(credentials.token).not.toBeNull();
-
-    const status = await auth.isLoggedIn(credentials.token, credentials.sessionId);
-    expect(status).toBe(true);
-  });
-});
+jest.mock('axios');
 
 describe('login flow', () => {
-  const mockCsrfTokenResponse = ['Set-Cookie: csrftoken=somecsrftoken;'];
-
-  let mockCurl: {
-    get: jest.Mock;
-    post: jest.Mock;
-  };
-
+  const mockCsrfTokenCookie = ['csrftoken=somecsrftoken;'];
+  let mockedAxios: jest.Mocked<typeof axios>;
   let auth: KilometrikisaAuth;
 
   beforeEach(() => {
-    mockCurl = {
-      get: jest.fn(),
-      post: jest.fn(),
-    };
-
-    auth = new KilometrikisaAuth(mockCurl);
+    mockedAxios = axios as jest.Mocked<typeof axios>;
+    auth = new KilometrikisaAuth();
   });
 
   describe('login', () => {
     it('should return credentials', async () => {
-      mockCurl.get.mockReturnValueOnce(mockCsrfTokenResponse);
-      mockCurl.post.mockReturnValueOnce(successfulSubmitResponse);
+      mockedAxios.get.mockResolvedValueOnce({
+        headers: {
+          'set-cookie': mockCsrfTokenCookie,
+        },
+      });
+      mockedAxios.post.mockResolvedValueOnce({
+        headers: {
+          'set-cookie': [mockCsrfTokenCookie, 'sessionid=somesessionid;'],
+        },
+      });
 
       const credentials = await auth.login('username', 'hunter2');
       expect(credentials.token).toBe('somecsrftoken');
@@ -54,10 +32,9 @@ describe('login flow', () => {
     });
 
     it('should throw an error if extracting CSRF token from cookie failed', async () => {
-      mockCurl.get.mockReturnValueOnce(['Set-Cookie: no token here']);
-      mockCurl.get.mockReturnValueOnce({
+      mockedAxios.get.mockResolvedValueOnce({
         headers: {
-          'set-cookie': ['no token here;'], // Does not contain a proper CSRF token
+          'set-cookie': 'no token here;',
         },
       });
 
@@ -67,8 +44,16 @@ describe('login flow', () => {
     });
 
     it('should throw an error if extracting session id failed', async () => {
-      mockCurl.get.mockReturnValueOnce(mockCsrfTokenResponse);
-      mockCurl.post.mockReturnValueOnce(failureSubmitResponse);
+      mockedAxios.get.mockResolvedValueOnce({
+        headers: {
+          'set-cookie': mockCsrfTokenCookie,
+        },
+      });
+      mockedAxios.post.mockResolvedValueOnce({
+        headers: {
+          'set-cookie': [mockCsrfTokenCookie, 'no session id here'],
+        },
+      });
       await expect(auth.login('username', 'hunter2')).rejects.toThrow(
         'Could not get token and sessionId from the login request'
       );
@@ -76,13 +61,17 @@ describe('login flow', () => {
   });
 
   describe('isLoggedIn', () => {
-    it('should return true when Kilometrikisa response does NOT contain certain keywords', async () => {
-      mockCurl.get.mockReturnValueOnce(isLoggedInResponse);
+    it('should return true when Kilometrikisa response page does not contain Kirjaudu sisään keywords', async () => {
+      mockedAxios.get.mockResolvedValueOnce({
+        data: 'No keywords here',
+      });
       await expect(auth.isLoggedIn('username', 'hunter2')).resolves.toBe(true);
     });
 
-    it('should return false when Kilometrikisa response does contain certain keywords', async () => {
-      mockCurl.get.mockReturnValueOnce(isNotLoggedInResponse);
+    it('should return false when Kilometrikisa response page does contain Kirjaudu sisään keywords', async () => {
+      mockedAxios.get.mockResolvedValueOnce({
+        data: '<html><body><h3>Kirjaudu sisään</h3></body>',
+      });
       await expect(auth.isLoggedIn('username', 'hunter2')).resolves.toBe(false);
     });
   });

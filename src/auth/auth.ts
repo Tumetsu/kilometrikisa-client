@@ -1,4 +1,4 @@
-import { Curl } from '../utils/curl';
+import axios from 'axios';
 const KILOMETRIKISA_LOGIN_URL = 'https://www.kilometrikisa.fi/accounts/login/';
 const KILOMETRIKISA_ACCOUNT_URL = 'https://www.kilometrikisa.fi/accounts/index/';
 
@@ -8,8 +8,6 @@ export interface LoginCredentials {
 }
 
 export class KilometrikisaAuth {
-  constructor(private curl: Curl) {}
-
   /**
    * Try to login in to the Kilometrikisa by using username and password. If successful, return
    * token and sessionId which can be used to do api calls to the service.
@@ -23,14 +21,9 @@ export class KilometrikisaAuth {
     return this.submitLoginDetails(username, password, csrfToken);
   }
 
-  private getTokenFromString(text: string, tokenName: string) {
-    return text.match(`.*${tokenName}=(.*?);`)?.[1];
-  }
-
   private async fetchCsrfToken() {
-    const responseRows = await this.curl.get(KILOMETRIKISA_LOGIN_URL);
-    const cookieRow = responseRows.find(row => row.includes('Set-Cookie:'));
-    const csrfToken = this.getTokenFromString(cookieRow ?? '', 'csrftoken');
+    const response = await axios.get(KILOMETRIKISA_LOGIN_URL);
+    const csrfToken = this.getCsrfTokenFromCookieHeader(response.headers['set-cookie'] ?? ['']);
 
     if (!csrfToken) {
       throw new Error('Could not extract CSRF token from login request');
@@ -39,42 +32,51 @@ export class KilometrikisaAuth {
     return csrfToken;
   }
 
+  private getCsrfTokenFromCookieHeader(setCookieRows: string[]) {
+    const csrfToken = this.getTokenFromString(setCookieRows[0], 'csrftoken');
+    if (!csrfToken) {
+      throw new Error('Could not extract CSRF token from login request');
+    }
+
+    return csrfToken;
+  }
+
+  private getTokenFromString(text: string, tokenName: string) {
+    return text.match(`.*${tokenName}=(.*?);`)?.[1];
+  }
+
   private async submitLoginDetails(
     username: string,
     password: string,
     csrfToken: string
   ): Promise<LoginCredentials> {
-    const responseRows = await this.curl.post(
+    const response = await axios.post(
       KILOMETRIKISA_LOGIN_URL,
-      {
-        username,
-        password,
-        csrfmiddlewaretoken: csrfToken,
-      },
+      `username=${username}&password=${password}&csrfmiddlewaretoken=${csrfToken}`,
       {
         headers: {
+          Referer: KILOMETRIKISA_LOGIN_URL,
           Cookie: `csrftoken=${csrfToken}`,
+        },
+        withCredentials: true,
+        maxRedirects: 0, // The sessionid is in the redirect response so do not follow that
+        validateStatus: function (status) {
+          // We expect status 302, since that contains sessionId! For some reason Kilometrikisa site first responds with
+          // 302 which contains sessionId and then returns another page with 200 without the said sessionId in headers.
+          return status === 302;
         },
       }
     );
 
-    let token;
-    let sessionId;
-    responseRows.forEach((row: string) => {
-      if (row.includes('Set-Cookie: csrftoken=')) {
-        token = this.getTokenFromString(row, 'csrftoken');
-      }
-      if (row.includes('Set-Cookie: sessionid=')) {
-        sessionId = this.getTokenFromString(row, 'sessionid');
-      }
-    });
+    const [, sessionIdCookie] = response.headers['set-cookie'] as string[];
+    const sessionId = this.getTokenFromString(sessionIdCookie, 'sessionid');
 
-    if (!token || !sessionId) {
+    if (!csrfToken || !sessionId) {
       throw new Error('Could not get token and sessionId from the login request');
     }
 
     return {
-      token,
+      token: csrfToken,
       sessionId,
     };
   }
@@ -85,17 +87,16 @@ export class KilometrikisaAuth {
    * @param sessionId
    */
   public async isLoggedIn(token: string, sessionId: string): Promise<boolean> {
-    const responseRows = await this.curl.get(KILOMETRIKISA_ACCOUNT_URL, {
+    const response = await axios.get(KILOMETRIKISA_ACCOUNT_URL, {
       headers: {
+        Referer: KILOMETRIKISA_LOGIN_URL,
         Cookie: `csrftoken=${token}; sessionid=${sessionId};`,
       },
     });
 
-    // Figure out from curl stdout data if the location is on the login page or on account page.
-    const loggedOut = responseRows.some(row => {
-      return row.includes('Location:') && row.includes('login');
-    });
-
-    return !loggedOut;
+    // Trying to figure out if the session is still valid is a bit hacky. We check the contents of the response and
+    // try to see if the page contains "Kirjaudu sisään" keywords to deduce if the session is still valid.
+    // TODO: Maybe we could instead try to POST some nonsense to the server and check if we get 403 as a response...?
+    return !response.data.includes('Kirjaudu sisään');
   }
 }
