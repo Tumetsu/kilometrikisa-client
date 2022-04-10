@@ -10,7 +10,34 @@ completely with Typescript.
 
 - Login to Kilometrikisa by username and password
 - Scrape public team statistics from Kilometrikisa site
-- Scrape team member statistics from Kilometrikisa site (requires Kilometrikisa credentials and being part of a scraped team)
+- Scrape team member statistics from Kilometrikisa site (requires Kilometrikisa credentials and being part of the scraped team)
+
+## Installation
+
+```
+npm install kilometrikisa-client --save
+```
+
+## Usage
+
+A quick example of usage:
+
+```
+import { login, getTeamStatistics, getTeamMemberStatistics } from 'kilometrikisa-client';
+
+// Log in to get credentials
+const credentials = await login('username', 'password');
+
+// Fetch member statistics of your team
+const memberData = await getTeamMemberStatistics('team-slug', 'competition-slug', credentials);
+
+// Fetch public team statistics for current competition
+const teamData = await getTeamStatistics('team-slug');
+```
+
+Team and competition slugs can be found from the kilometrikisa.fi site urls. For example
+team slug can be found from public team page's url: `https://www.kilometrikisa.fi/teams/<this-is-team-slug>/`
+Competition slug can be found from the team page url when logged in. Usually it is in form of `kilometrikisa-2022` etc.
 
 ## Development
 
@@ -32,7 +59,8 @@ npm run test:production
 - Please open an issue about the bug, feature request etc. first to open a discussion
 - For bug reports, be specific about the issue and provide steps to reproduce the bug if possible
 
-### Code quality 
+### Code quality
+
 - Add tests for the new feature or bug fix if possible
 - Make sure test suite and linter pass
 
