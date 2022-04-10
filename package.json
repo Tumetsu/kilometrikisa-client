@@ -5,9 +5,9 @@
   "author": "Tuomas Salmi",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/tumetsu/kilometrikisa-client/issues"
+    "url": "https://github.com/Tumetsu/kilometrikisa-client/issues"
   },
-  "homepage": "https://gitlab.com/tumetsu/kilometrikisa-client#readme",
+  "homepage": "https://github.com/Tumetsu/kilometrikisa-client#readme",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -38,7 +38,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/tumetsu/kilometrikisa-client.git"
+    "url": "git+https://github.com/Tumetsu/kilometrikisa-client.git"
   },
   "keywords": [
     "kilometrikisa",
