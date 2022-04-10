@@ -1,7 +1,13 @@
 {
   "name": "kilometrikisa-client",
   "version": "0.0.1",
-  "description": "Provide API to log in and posting data to the kilometrikisa.fi",
+  "description": "Provide API to log in and posting and scraping data to and from the kilometrikisa.fi",
+  "author": "Tuomas Salmi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/tumetsu/kilometrikisa-client/issues"
+  },
+  "homepage": "https://gitlab.com/tumetsu/kilometrikisa-client#readme",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -24,7 +30,10 @@
     "lint": "eslint ./src --ext .ts",
     "lint:fix": "eslint ./src --ext .ts --fix",
     "prettier-fix": "prettier --write --config .prettierrc ./",
-    "prettier-check": "prettier --check --config .prettierrc ."
+    "prettier-check": "prettier --check --config .prettierrc .",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint"
   },
   "repository": {
     "type": "git",
@@ -33,14 +42,9 @@
   "keywords": [
     "kilometrikisa",
     "client",
-    "api"
+    "api",
+    "scraping"
   ],
-  "author": "Tuomas Salmi",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://gitlab.com/tumetsu/kilometrikisa-client/issues"
-  },
-  "homepage": "https://gitlab.com/tumetsu/kilometrikisa-client#readme",
   "dependencies": {
     "axios": "^0.26.1",
     "cheerio": "^1.0.0-rc.10"
