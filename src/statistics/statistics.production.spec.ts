@@ -1,5 +1,6 @@
-import { getTeamMemberStatistics, getTeamStatistics } from './statistics';
+import { getTeamMemberStatistics, getTeamStatistics, getUserLogEntries } from './statistics';
 import { login } from '../index';
+import { LoginCredentials } from '../auth/auth';
 
 describe('statistics', () => {
   describe('fetch team statistics from production', () => {
@@ -8,15 +9,25 @@ describe('statistics', () => {
     const teamSlug = process?.env['KILOMETRIKISA_TEAM_SLUG'] ?? '';
     const competitionSlug = process?.env['KILOMETRIKISA_COMPETITION_SLUG'] ?? '';
 
+    let credentials: LoginCredentials;
+
+    beforeAll(async () => {
+      credentials = await login(username, password);
+    });
+
     it('should fetch team statistics', async () => {
       const results = await getTeamStatistics('vincit-forza');
       expect(results).not.toBeNull();
     });
 
     it('should fetch team member statistics', async () => {
-      const credentials = await login(username, password);
       const results = await getTeamMemberStatistics(teamSlug, competitionSlug, credentials);
       expect(results.distanceStatistics.length).toBeGreaterThan(0);
+    });
+
+    it('should fetch user distance entries', async () => {
+      const results = await getUserLogEntries('45', 2021, credentials);
+      expect(results.length).toBeGreaterThan(0);
     });
   });
 });
