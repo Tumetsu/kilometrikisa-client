@@ -10,13 +10,12 @@ describe('login flow against production', () => {
     const credentials = await login(username, password);
     expect(credentials.token).not.toBeNull();
 
-    const status = await isLoggedIn(credentials.token, credentials.sessionId);
+    const status = await isLoggedIn(credentials);
     expect(status).toBe(true);
   });
 
   it('should notice that the session and token are not logged in', async () => {
-    const status = await isLoggedIn('oldtoken', 'oldsession');
+    const status = await isLoggedIn({ token: 'oldtoken', sessionId: 'oldsession' });
     expect(status).toBe(false);
   });
 });
-

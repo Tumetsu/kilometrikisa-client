@@ -89,14 +89,12 @@ async function submitLoginDetails(
 
 /**
  * Check if the given token and session id are still valid.
- * @param token
- * @param sessionId
  */
-export async function isLoggedIn(token: string, sessionId: string): Promise<boolean> {
+export async function isLoggedIn(credentials: LoginCredentials): Promise<boolean> {
   const response = await axios.get(KILOMETRIKISA_ACCOUNT_URL, {
     headers: {
       Referer: KILOMETRIKISA_LOGIN_URL,
-      Cookie: `csrftoken=${token}; sessionid=${sessionId};`,
+      Cookie: `csrftoken=${credentials.token}; sessionid=${credentials.sessionId};`,
     },
   });
 

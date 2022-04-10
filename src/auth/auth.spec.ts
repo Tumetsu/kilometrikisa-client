@@ -67,13 +67,13 @@ describe('login flow', () => {
         response: {
           status: 200, // 200 IS a failure for this request, since we need 302 response for the login.,
         },
-        isAxiosError: true
-      })
+        isAxiosError: true,
+      });
 
       mockedAxios.isAxiosError.mockReturnValue(true);
       await expect(login('username', 'hunter2')).rejects.toThrow(
         'Login failed. Are username and password valid?'
-      )
+      );
       mockedAxios.isAxiosError.mockRestore();
     });
   });
@@ -83,14 +83,18 @@ describe('login flow', () => {
       mockedAxios.get.mockResolvedValueOnce({
         data: 'No keywords here',
       });
-      await expect(isLoggedIn('username', 'hunter2')).resolves.toBe(true);
+      await expect(isLoggedIn({ token: 'sometoken', sessionId: 'somesession' })).resolves.toBe(
+        true
+      );
     });
 
     it('should return false when Kilometrikisa response page does contain Kirjaudu sisään keywords', async () => {
       mockedAxios.get.mockResolvedValueOnce({
         data: '<html><body><h3>Kirjaudu sisään</h3></body>',
       });
-      await expect(isLoggedIn('username', 'hunter2')).resolves.toBe(false);
+      await expect(isLoggedIn({ token: 'sometoken', sessionId: 'somesession' })).resolves.toBe(
+        false
+      );
     });
   });
 });
