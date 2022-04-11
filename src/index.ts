@@ -1,11 +1,8 @@
 import { isLoggedIn, login } from './auth/auth';
-import { getTeamMemberStatistics, getUserLogEntries } from './statistics/statistics';
+import { getTeamMemberStatistics } from './statistics/statistics';
+import { getUserLogEntries } from './competition-log/competition-log';
 export { login, isLoggedIn } from './auth/auth';
-export {
-  getTeamStatistics,
-  getTeamMemberStatistics,
-  getUserLogEntries,
-} from './statistics/statistics';
+export { getTeamStatistics, getTeamMemberStatistics } from './statistics/statistics';
 
 /**
  * An utility API to let user to give login credentials only once and then call methods requiring

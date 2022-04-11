@@ -1,4 +1,4 @@
-import { getTeamMemberStatistics, getTeamStatistics, getUserLogEntries } from './statistics';
+import { getTeamMemberStatistics, getTeamStatistics } from './statistics';
 import { login } from '../index';
 import { LoginCredentials } from '../auth/auth';
 
@@ -23,11 +23,6 @@ describe('statistics', () => {
     it('should fetch team member statistics', async () => {
       const results = await getTeamMemberStatistics(teamSlug, competitionSlug, credentials);
       expect(results.distanceStatistics.length).toBeGreaterThan(0);
-    });
-
-    it('should fetch user distance entries', async () => {
-      const results = await getUserLogEntries('45', 2021, credentials);
-      expect(results.length).toBeGreaterThan(0);
     });
   });
 });
