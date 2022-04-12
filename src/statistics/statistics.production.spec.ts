@@ -12,7 +12,7 @@ describe('statistics', () => {
     let credentials: SessionCredentials;
 
     beforeAll(async () => {
-      credentials = await login(username, password);
+      credentials = await login({username, password});
     });
 
     it('should fetch team statistics', async () => {
