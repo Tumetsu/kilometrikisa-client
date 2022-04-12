@@ -1,11 +1,16 @@
 import axios from 'axios';
-import { login, isLoggedIn } from './auth';
+import { login, isLoggedIn, LoginCredentials } from './auth';
 
 jest.mock('axios');
 
 describe('login flow', () => {
   const mockCsrfTokenCookie = ['csrftoken=somecsrftoken;'];
   let mockedAxios: jest.Mocked<typeof axios>;
+
+  const loginCredentials: LoginCredentials = {
+    username: 'username',
+    password: 'hunter2',
+  };
 
   beforeEach(() => {
     mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -24,7 +29,7 @@ describe('login flow', () => {
         },
       });
 
-      const credentials = await login('username', 'hunter2');
+      const credentials = await login(loginCredentials);
       expect(credentials.token).toBe('somecsrftoken');
       expect(credentials.sessionId).toBe('somesessionid');
     });
@@ -36,7 +41,7 @@ describe('login flow', () => {
         },
       });
 
-      await expect(login('username', 'hunter2')).rejects.toThrow(
+      await expect(login(loginCredentials)).rejects.toThrow(
         'Could not extract CSRF token from login request'
       );
     });
@@ -52,7 +57,7 @@ describe('login flow', () => {
           'set-cookie': [mockCsrfTokenCookie, 'no session id here'],
         },
       });
-      await expect(login('username', 'hunter2')).rejects.toThrow(
+      await expect(login(loginCredentials)).rejects.toThrow(
         'Could not get token and sessionId from the login request'
       );
     });
@@ -71,7 +76,7 @@ describe('login flow', () => {
       });
 
       mockedAxios.isAxiosError.mockReturnValue(true);
-      await expect(login('username', 'hunter2')).rejects.toThrow(
+      await expect(login(loginCredentials)).rejects.toThrow(
         'Login failed. Are username and password valid?'
       );
       mockedAxios.isAxiosError.mockRestore();

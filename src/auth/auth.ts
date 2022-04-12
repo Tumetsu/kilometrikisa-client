@@ -9,18 +9,20 @@ export interface SessionCredentials {
   sessionId: string;
 }
 
+export interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
 /**
  * Try to login in to the Kilometrikisa by using username and password. If successful, return
  * token and sessionId which can be used to do api calls to the service.
- *
- * @param username
- * @param password
  */
-export async function login(username: string, password: string): Promise<SessionCredentials> {
+export async function login(credentials: LoginCredentials): Promise<SessionCredentials> {
   const csrfToken = await fetchCsrfToken();
 
   try {
-    return await submitLoginDetails(username, password, csrfToken);
+    return await submitLoginDetails(credentials.username, credentials.password, csrfToken);
   } catch (err) {
     if (axios.isAxiosError(err)) {
       throw new KilometrikisaError(

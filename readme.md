@@ -23,13 +23,13 @@ npm install kilometrikisa-client --save
 A quick example of usage:
 
 ```
-import { login, getTeamStatistics, getTeamMemberStatistics } from 'kilometrikisa-client';
+import { getTeamStatistics, kilometrikisaSession } from 'kilometrikisa-client';
 
-// Log in to get credentials
-const credentials = await login('username', 'password');
+// Log in to get session 
+const session = await kilometrikisaSession({username: 'username', passoword: 'password'});
 
 // Fetch member statistics of your team
-const memberData = await getTeamMemberStatistics('team-slug', 'contest-slug', credentials);
+const memberData = await session.getTeamMemberStatistics('team-slug', 'contest-slug');
 
 // Fetch public team statistics for current contest
 const teamData = await getTeamStatistics('team-slug');

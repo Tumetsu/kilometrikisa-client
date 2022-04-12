@@ -7,7 +7,7 @@ describe('login flow against production', () => {
   const password = process?.env['KILOMETRIKISA_PASSWORD'] ?? '';
 
   it('should log in and verify that user is logged in', async () => {
-    const credentials = await login(username, password);
+    const credentials = await login({ username, password });
     expect(credentials.token).not.toBeNull();
 
     const status = await isLoggedIn(credentials);
