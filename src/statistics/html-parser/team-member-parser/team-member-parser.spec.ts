@@ -1,8 +1,6 @@
-import {
-  parseKilometrikisaTeamMemberStatistics,
-  TeamMemberStatisticsParsingError,
-} from './team-member-parser';
+import { parseKilometrikisaTeamMemberStatistics } from './team-member-parser';
 import { teamMemberPageMock } from './kilometrikisa-team-member-page.mocks';
+import { KilometrikisaError } from '../../../utils/error-handling';
 
 describe('html-parser', () => {
   describe('team member data', () => {
@@ -74,7 +72,7 @@ describe('html-parser', () => {
 
     it('should throw an error if the parsing failed', () => {
       expect(() => parseKilometrikisaTeamMemberStatistics('not valid html')).toThrow(
-        TeamMemberStatisticsParsingError
+        KilometrikisaError
       );
     });
   });
