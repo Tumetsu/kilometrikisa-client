@@ -15,7 +15,7 @@ const kilometrikisaBaseUrl = 'https://www.kilometrikisa.fi';
  * @param year
  * @param credentials
  */
-export async function getUserLogEntries(
+export async function getUserContestLogEntries(
   contestId: string,
   year: number,
   credentials: SessionCredentials

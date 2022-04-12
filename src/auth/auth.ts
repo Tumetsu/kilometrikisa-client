@@ -106,7 +106,7 @@ async function submitLoginDetails(
 /**
  * Check if the given token and session id are still valid.
  */
-export async function isLoggedIn(credentials: SessionCredentials): Promise<boolean> {
+export async function isSessionValid(credentials: SessionCredentials): Promise<boolean> {
   const response = await axios.get(KILOMETRIKISA_ACCOUNT_URL, {
     headers: {
       Referer: KILOMETRIKISA_LOGIN_URL,

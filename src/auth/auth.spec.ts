@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { login, isLoggedIn, LoginCredentials } from './auth';
+import { login, isSessionValid, LoginCredentials } from './auth';
 
 jest.mock('axios');
 
@@ -88,7 +88,7 @@ describe('login flow', () => {
       mockedAxios.get.mockResolvedValueOnce({
         data: 'No keywords here',
       });
-      await expect(isLoggedIn({ token: 'sometoken', sessionId: 'somesession' })).resolves.toBe(
+      await expect(isSessionValid({ token: 'sometoken', sessionId: 'somesession' })).resolves.toBe(
         true
       );
     });
@@ -97,7 +97,7 @@ describe('login flow', () => {
       mockedAxios.get.mockResolvedValueOnce({
         data: '<html><body><h3>Kirjaudu sisään</h3></body>',
       });
-      await expect(isLoggedIn({ token: 'sometoken', sessionId: 'somesession' })).resolves.toBe(
+      await expect(isSessionValid({ token: 'sometoken', sessionId: 'somesession' })).resolves.toBe(
         false
       );
     });

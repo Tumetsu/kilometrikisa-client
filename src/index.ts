@@ -1,7 +1,7 @@
-import { isLoggedIn, login, LoginCredentials, SessionCredentials } from './auth/auth';
+import { isSessionValid, login, LoginCredentials, SessionCredentials } from './auth/auth';
 import { getTeamMemberStatistics } from './statistics/statistics';
-import { getUserLogEntries } from './contest-log/contest-log';
-export { login, isLoggedIn } from './auth/auth';
+import { getUserContestLogEntries } from './contest-log/contest-log';
+export { login, isSessionValid } from './auth/auth';
 export { KilometrikisaErrorCode, KilometrikisaError } from './utils/error-handling';
 export { getTeamStatistics } from './statistics/statistics';
 
@@ -54,14 +54,14 @@ class KilometrikisaSession {
    * @param year
    */
   getUserContestLogEntries(contestId: string, year: number) {
-    return getUserLogEntries(contestId, year, this._credentials);
+    return getUserContestLogEntries(contestId, year, this._credentials);
   }
 
   /**
    * Check if the given token and session id are still valid.
    */
   public isSessionValid() {
-    return isLoggedIn(this._credentials);
+    return isSessionValid(this._credentials);
   }
 
   /**
