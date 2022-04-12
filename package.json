@@ -30,10 +30,9 @@
     "test:production": "export $(cat .env | xargs) && jest src/**/*.production.spec.ts",
     "lint": "eslint ./src --ext .ts",
     "lint:fix": "eslint ./src --ext .ts --fix",
-    "prettier-fix": "prettier --write --config .prettierrc ./",
-    "prettier-check": "prettier --check --config .prettierrc .",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint",
+    "prettier:fix": "prettier --write --config .prettierrc ./",
+    "prettier:check": "prettier --check --config .prettierrc ./",
+    "prepublishOnly": "npm test && npm run lint && npm run build",
     "preversion": "npm run lint"
   },
   "repository": {
