@@ -26,7 +26,7 @@
   },
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
-    "test": "jest src/**/*.spec.ts --testPathIgnorePatterns .production.spec.ts",
+    "test": "jest --testPathIgnorePatterns .production.spec.ts",
     "test:production": "export $(cat .env | xargs) && jest src/**/*.production.spec.ts",
     "lint": "eslint ./src --ext .ts",
     "lint:fix": "eslint ./src --ext .ts --fix",
