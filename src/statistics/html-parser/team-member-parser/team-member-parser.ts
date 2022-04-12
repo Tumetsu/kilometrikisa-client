@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { CheerioAPI } from 'cheerio';
+import { KilometrikisaError, KilometrikisaErrorCode } from '../../../utils/error-handling';
 
 export interface TeamMemberDistanceStatistics {
   placement: number;
@@ -22,19 +23,16 @@ export interface TeamMemberTimeStatistics {
   totalCyclingDays: number;
 }
 
-export class TeamMemberStatisticsParsingError extends Error {
-  constructor() {
-    super('Could not parse team member data from Kilometrikisa team page.');
-  }
-}
-
 export function parseKilometrikisaTeamMemberStatistics(htmlData: string) {
   const $ = cheerio.load(htmlData);
   const distanceStatistics = getDistanceTableData($);
   const timeStatistics = getMinuteTableData($);
 
   if (!distanceStatistics.length && !timeStatistics.length) {
-    throw new TeamMemberStatisticsParsingError();
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.COULD_NOT_PARSE_RESPONSE,
+      'Could not parse team member data from Kilometrikisa team page.'
+    );
   }
 
   return {

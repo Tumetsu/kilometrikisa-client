@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import { KilometrikisaError, KilometrikisaErrorCode } from '../../../utils/error-handling';
 
 interface DataValuePair {
   title: string;
@@ -15,12 +16,6 @@ export interface TeamStatistics {
   savedCO2: number;
 }
 
-export class TeamPageParsingError extends Error {
-  constructor() {
-    super('Could not parse data from Kilometrikisa team page.');
-  }
-}
-
 export function parseKilometrikisaTeamPageStatistics(htmlData: string): TeamStatistics {
   const $ = cheerio.load(htmlData);
 
@@ -32,7 +27,10 @@ export function parseKilometrikisaTeamPageStatistics(htmlData: string): TeamStat
     .get();
 
   if (!dataValues.length) {
-    throw new TeamPageParsingError();
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.COULD_NOT_PARSE_RESPONSE,
+      'Could not parse data from Kilometrikisa team page.'
+    );
   }
 
   return convertDataToTypedObject(dataValues);

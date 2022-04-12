@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { LoginCredentials } from '../auth/auth';
 import { getAuthConfig } from '../utils/requests';
+import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
 
 const kilometrikisaBaseUrl = 'https://www.kilometrikisa.fi';
 
@@ -31,7 +32,10 @@ export async function getUserLogEntries(
     }));
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      throw new Error('Server responded with an error. Are the contestId and year valid?');
+      throw new KilometrikisaError(
+        KilometrikisaErrorCode.USER_CONTEST_LOG_NOT_FOUND,
+        'Server responded with an error. Are the contestId and year valid?'
+      );
     }
     throw err;
   }

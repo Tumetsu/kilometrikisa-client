@@ -2,6 +2,7 @@ import { isLoggedIn, login } from './auth/auth';
 import { getTeamMemberStatistics } from './statistics/statistics';
 import { getUserLogEntries } from './contest-log/contest-log';
 export { login, isLoggedIn } from './auth/auth';
+export { KilometrikisaErrorCode, KilometrikisaError } from './utils/error-handling';
 export { getTeamStatistics, getTeamMemberStatistics } from './statistics/statistics';
 
 /**

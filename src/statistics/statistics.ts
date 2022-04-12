@@ -2,7 +2,10 @@ import axios from 'axios';
 import { LoginCredentials } from '../auth/auth';
 import { parseKilometrikisaTeamPageStatistics } from './html-parser/team-parser/team-parser';
 import { parseKilometrikisaTeamMemberStatistics } from './html-parser/team-member-parser/team-member-parser';
-import { transformAxiosError } from '../utils/error-handling';
+import {
+  KilometrikisaError,
+  KilometrikisaErrorCode,
+} from '../utils/error-handling';
 import { getAuthConfig } from '../utils/requests';
 
 const kilometrikisaBaseUrl = 'https://www.kilometrikisa.fi';
@@ -17,8 +20,10 @@ export async function getTeamStatistics(teamSlug: string) {
     const teamStatisticsPageResponse = await axios.get(kilometrikisaTeamPageBaseUrl + teamSlug);
     return parseKilometrikisaTeamPageStatistics(teamStatisticsPageResponse.data);
   } catch (err) {
-    transformAxiosError(err, 404, `Team ${teamSlug} could not be found.`);
-    throw err;
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.TEAM_STATISTICS_NOT_FOUND,
+      `Team ${teamSlug} could not be found.`
+    );
   }
 }
 
@@ -38,12 +43,10 @@ export async function getTeamMemberStatistics(
     const teamMemberStatisticsPage = await axios.get(url, getAuthConfig(url, credentials));
     return parseKilometrikisaTeamMemberStatistics(teamMemberStatisticsPage.data);
   } catch (err) {
-    transformAxiosError(
-      err,
-      404,
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.TEAM_STATISTICS_NOT_FOUND,
       `Team ${teamSlug} for given contest ${contestSlug} could not be found.`
     );
     throw err;
   }
 }
-
