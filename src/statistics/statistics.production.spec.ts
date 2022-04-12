@@ -1,6 +1,5 @@
 import { getTeamMemberStatistics, getTeamStatistics } from './statistics';
-import { login } from '../index';
-import { SessionCredentials } from '../auth/auth';
+import { login, SessionCredentials } from '../auth/auth';
 
 describe('statistics', () => {
   describe('fetch team statistics from production', () => {

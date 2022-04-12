@@ -1,5 +1,4 @@
-import { login } from '../index';
-import { SessionCredentials } from '../auth/auth';
+import { login, SessionCredentials } from '../auth/auth';
 import { getUserContestLogEntries } from './contest-log';
 
 describe('contest log', () => {

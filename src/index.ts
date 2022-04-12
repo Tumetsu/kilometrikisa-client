@@ -1,7 +1,7 @@
 import { isSessionValid, login, LoginCredentials, SessionCredentials } from './auth/auth';
 import { getTeamMemberStatistics } from './statistics/statistics';
 import { getUserContestLogEntries } from './contest-log/contest-log';
-export { login, isSessionValid } from './auth/auth';
+
 export { KilometrikisaErrorCode, KilometrikisaError } from './utils/error-handling';
 export { getTeamStatistics } from './statistics/statistics';
 
