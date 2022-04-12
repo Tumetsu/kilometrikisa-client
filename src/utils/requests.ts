@@ -8,4 +8,3 @@ export function getAuthConfig(url: string, credentials: SessionCredentials) {
     },
   };
 }
-

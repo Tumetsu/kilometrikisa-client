@@ -9,7 +9,7 @@ describe('contest log', () => {
   let credentials: SessionCredentials;
 
   beforeAll(async () => {
-    credentials = await login({username, password});
+    credentials = await login({ username, password });
   });
 
   it("should fetch user's distance entries", async () => {

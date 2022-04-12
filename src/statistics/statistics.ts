@@ -2,10 +2,7 @@ import axios from 'axios';
 import { SessionCredentials } from '../auth/auth';
 import { parseKilometrikisaTeamPageStatistics } from './html-parser/team-parser/team-parser';
 import { parseKilometrikisaTeamMemberStatistics } from './html-parser/team-member-parser/team-member-parser';
-import {
-  KilometrikisaError,
-  KilometrikisaErrorCode,
-} from '../utils/error-handling';
+import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
 import { getAuthConfig } from '../utils/requests';
 
 const kilometrikisaBaseUrl = 'https://www.kilometrikisa.fi';
