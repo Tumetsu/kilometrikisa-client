@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
+
 const KILOMETRIKISA_LOGIN_URL = 'https://www.kilometrikisa.fi/accounts/login/';
 const KILOMETRIKISA_ACCOUNT_URL = 'https://www.kilometrikisa.fi/accounts/index/';
 
@@ -21,7 +23,10 @@ export async function login(username: string, password: string): Promise<LoginCr
     return await submitLoginDetails(username, password, csrfToken);
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      throw new Error('Login failed. Are username and password valid?');
+      throw new KilometrikisaError(
+        KilometrikisaErrorCode.LOGIN_FAILED,
+        'Login failed. Are username and password valid?'
+      );
     }
     throw err;
   }
@@ -32,7 +37,10 @@ async function fetchCsrfToken() {
   const csrfToken = getCsrfTokenFromCookieHeader(response.headers['set-cookie'] ?? ['']);
 
   if (!csrfToken) {
-    throw new Error('Could not extract CSRF token from login request');
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.LOGIN_FAILED,
+      'Could not extract CSRF token from login request'
+    );
   }
 
   return csrfToken;
@@ -41,7 +49,10 @@ async function fetchCsrfToken() {
 function getCsrfTokenFromCookieHeader(setCookieRows: string[]) {
   const csrfToken = getTokenFromString(setCookieRows[0], 'csrftoken');
   if (!csrfToken) {
-    throw new Error('Could not extract CSRF token from login request');
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.LOGIN_FAILED,
+      'Could not extract CSRF token from login request'
+    );
   }
 
   return csrfToken;
@@ -78,7 +89,10 @@ async function submitLoginDetails(
   const sessionId = getTokenFromString(sessionIdCookie, 'sessionid');
 
   if (!csrfToken || !sessionId) {
-    throw new Error('Could not get token and sessionId from the login request');
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.LOGIN_FAILED,
+      'Could not get token and sessionId from the login request'
+    );
   }
 
   return {
