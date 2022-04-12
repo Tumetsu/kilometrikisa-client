@@ -26,7 +26,7 @@ A quick example of usage:
 import { getTeamStatistics, kilometrikisaSession } from 'kilometrikisa-client';
 
 // Log in to get session 
-const session = await kilometrikisaSession({username: 'username', passoword: 'password'});
+const session = await kilometrikisaSession({username: 'username', password: 'password'});
 
 // Fetch member statistics of your team
 const memberData = await session.getTeamMemberStatistics('team-slug', 'contest-slug');
