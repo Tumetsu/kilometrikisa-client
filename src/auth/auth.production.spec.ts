@@ -1,4 +1,4 @@
-import { login, isLoggedIn } from './auth';
+import { login, isSessionValid } from './auth';
 
 // NOTE: These tests are ran against the production to verify the integration and requires credentials to be set
 // to the .env file
@@ -10,12 +10,12 @@ describe('login flow against production', () => {
     const credentials = await login({ username, password });
     expect(credentials.token).not.toBeNull();
 
-    const status = await isLoggedIn(credentials);
+    const status = await isSessionValid(credentials);
     expect(status).toBe(true);
   });
 
   it('should notice that the session and token are not logged in', async () => {
-    const status = await isLoggedIn({ token: 'oldtoken', sessionId: 'oldsession' });
+    const status = await isSessionValid({ token: 'oldtoken', sessionId: 'oldsession' });
     expect(status).toBe(false);
   });
 });
