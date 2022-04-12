@@ -29,15 +29,15 @@ import { login, getTeamStatistics, getTeamMemberStatistics } from 'kilometrikisa
 const credentials = await login('username', 'password');
 
 // Fetch member statistics of your team
-const memberData = await getTeamMemberStatistics('team-slug', 'competition-slug', credentials);
+const memberData = await getTeamMemberStatistics('team-slug', 'contest-slug', credentials);
 
-// Fetch public team statistics for current competition
+// Fetch public team statistics for current contest
 const teamData = await getTeamStatistics('team-slug');
 ```
 
-Team and competition slugs can be found from the kilometrikisa.fi site urls. For example
+Team and contest slugs can be found from the kilometrikisa.fi site urls. For example
 team slug can be found from public team page's url: `https://www.kilometrikisa.fi/teams/<this-is-team-slug>/`
-Competition slug can be found from the team page url when logged in. Usually it is in form of `kilometrikisa-2022` etc.
+Contest slug can be found from the team page url when logged in. Usually it is in form of `kilometrikisa-2022` etc.
 
 ## Development
 

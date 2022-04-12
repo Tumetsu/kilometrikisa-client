@@ -7,7 +7,7 @@ describe('statistics', () => {
     const username = process?.env['KILOMETRIKISA_USERNAME'] ?? '';
     const password = process?.env['KILOMETRIKISA_PASSWORD'] ?? '';
     const teamSlug = process?.env['KILOMETRIKISA_TEAM_SLUG'] ?? '';
-    const competitionSlug = process?.env['KILOMETRIKISA_COMPETITION_SLUG'] ?? '';
+    const contestSlug = process?.env['KILOMETRIKISA_CONTEST_SLUG'] ?? '';
 
     let credentials: LoginCredentials;
 
@@ -21,7 +21,7 @@ describe('statistics', () => {
     });
 
     it('should fetch team member statistics', async () => {
-      const results = await getTeamMemberStatistics(teamSlug, competitionSlug, credentials);
+      const results = await getTeamMemberStatistics(teamSlug, contestSlug, credentials);
       expect(results.distanceStatistics.length).toBeGreaterThan(0);
     });
   });

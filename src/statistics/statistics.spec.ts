@@ -37,7 +37,7 @@ describe('statistics', () => {
       mockedAxios.isAxiosError.mockReturnValue(true);
       await expect(
         getTeamMemberStatistics('tiimi', 'kisa', { token: '123', sessionId: '456' })
-      ).rejects.toThrow('Team tiimi for given competition kisa could not be found.');
+      ).rejects.toThrow('Team tiimi for given contest kisa could not be found.');
       mockedAxios.isAxiosError.mockRestore();
     });
   });

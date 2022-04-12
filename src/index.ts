@@ -1,6 +1,6 @@
 import { isLoggedIn, login } from './auth/auth';
 import { getTeamMemberStatistics } from './statistics/statistics';
-import { getUserLogEntries } from './competition-log/competition-log';
+import { getUserLogEntries } from './contest-log/contest-log';
 export { login, isLoggedIn } from './auth/auth';
 export { getTeamStatistics, getTeamMemberStatistics } from './statistics/statistics';
 
@@ -14,10 +14,10 @@ export async function loggedInClient(username: string, password: string) {
   const credentials = await login(username, password);
 
   return {
-    getTeamMemberStatistics: (teamSlug: string, competitionSlug: string) =>
-      getTeamMemberStatistics(teamSlug, competitionSlug, credentials),
+    getTeamMemberStatistics: (teamSlug: string, contestSlug: string) =>
+      getTeamMemberStatistics(teamSlug, contestSlug, credentials),
     isLoggedIn: () => isLoggedIn(credentials),
-    getUserLogEntries: (competitionId: string, year: number) =>
-      getUserLogEntries(competitionId, year, credentials),
+    getUserLogEntries: (contestId: string, year: number) =>
+      getUserLogEntries(contestId, year, credentials),
   };
 }
