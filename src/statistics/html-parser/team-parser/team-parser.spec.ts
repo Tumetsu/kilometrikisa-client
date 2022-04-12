@@ -1,4 +1,4 @@
-import { parseKilometrikisaTeamPageStatistics } from './team-parser';
+import { parseKilometrikisaTeamPageStatistics, TeamSeries } from './team-parser';
 import { teamPageHtmlMock } from './kilometrikisa-team-page.mocks';
 import { KilometrikisaError } from '../../../utils/error-handling';
 
@@ -7,7 +7,8 @@ describe('html-parser', () => {
     it('should return all team data from html page with correct units and values', () => {
       const result = parseKilometrikisaTeamPageStatistics(teamPageHtmlMock());
       expect(result).toEqual({
-        seriesPlacement: undefined,
+        series: TeamSeries.SMALL,
+        seriesPlacement: null,
         distancePerPerson: 300,
         totalDistance: 1234,
         daysPerPerson: 26,

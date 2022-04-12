@@ -6,8 +6,16 @@ interface DataValuePair {
   valueAndUnit: string;
 }
 
+export enum TeamSeries {
+  SMALL = 'small',
+  LARGE = 'large',
+  POWER = 'power',
+  EBIKE = 'ebike',
+}
+
 export interface TeamStatistics {
-  seriesPlacement: number | undefined;
+  series: TeamSeries;
+  seriesPlacement: number | null;
   distancePerPerson: number;
   totalDistance: number;
   daysPerPerson: number;
@@ -33,7 +41,10 @@ export function parseKilometrikisaTeamPageStatistics(htmlData: string): TeamStat
     );
   }
 
-  return convertDataToTypedObject(dataValues);
+  return {
+    series: convertDataToTeamSeries(dataValues[0]),
+    ...convertDataToTypedObject(dataValues),
+  };
 }
 
 /**
@@ -49,7 +60,10 @@ export function parseKilometrikisaTeamPageStatistics(htmlData: string): TeamStat
  */
 function extractDataFromElement($: cheerio.CheerioAPI, element: cheerio.Element) {
   const titleContent = $(element).find('.data-title').text();
-  const valueContent = $(element).children().remove().end().text();
+  let valueContent = $(element).find('strong').text(); // Sometimes values are inside strong tag
+  if (!valueContent) {
+    valueContent = $(element).children().remove().end().text();
+  }
 
   return {
     title: titleContent.trim(),
@@ -63,6 +77,9 @@ function extractDataFromElement($: cheerio.CheerioAPI, element: cheerio.Element)
  */
 const stringTitlesToKeys: Record<string, string> = {
   'Piensarjan sijoitus': 'seriesPlacement',
+  'Suursarjan sijoitus': 'seriesPlacement',
+  'Tehosarjan sijoitus': 'seriesPlacement',
+  'Sähkösarjan sijoitus': 'seriesPlacement',
   'Joukkueen keskiarvo': 'distancePerPerson',
   'Kilometrit yhteensä': 'totalDistance',
   'Pyöräilypäivien keskiarvo': 'daysPerPerson',
@@ -71,17 +88,29 @@ const stringTitlesToKeys: Record<string, string> = {
   'CO2 säästetty': 'savedCO2',
 };
 
-function convertDataToTypedObject(pairs: DataValuePair[]): TeamStatistics {
+function convertDataToTypedObject(pairs: DataValuePair[]) {
   function extractValue(valueAndUnit: string) {
     const [value] = valueAndUnit.split(' ');
-    return value ? parseFloat(value) : undefined;
+    const parsed = value ? parseFloat(value) : undefined;
+    return !Number.isNaN(parsed) ? parsed : null;
   }
 
-  const result: Record<string, number | undefined> = {};
+  const result: Record<string, number | undefined | null> = {};
   pairs.forEach(({ title, valueAndUnit }) => {
     const key = stringTitlesToKeys[title];
     result[key] = extractValue(valueAndUnit);
   });
 
-  return result as unknown as TeamStatistics;
+  return result as unknown as Omit<TeamStatistics, 'series'>;
+}
+
+function convertDataToTeamSeries(pair: DataValuePair) {
+  const map: Record<string, TeamSeries> = {
+    'Piensarjan sijoitus': TeamSeries.SMALL,
+    'Suursarjan sijoitus': TeamSeries.LARGE,
+    'Tehosarjan sijoitus': TeamSeries.POWER,
+    'Sähkösarjan sijoitus': TeamSeries.EBIKE,
+  };
+
+  return map[pair.title];
 }
