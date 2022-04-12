@@ -6,7 +6,7 @@ export { KilometrikisaErrorCode, KilometrikisaError } from './utils/error-handli
 export { getTeamStatistics } from './statistics/statistics';
 
 /**
- * Get an object with API-methods to access Kilometrikisa features which require authentication with user account.
+ * Get a client class with API-methods to access Kilometrikisa features which require authentication with user account.
  * You can authenticate either with username and password or with token and sessionId.
  *
  * For general once-off use and first time login you have to use username and password login. For subsequent use you
@@ -29,15 +29,45 @@ export async function kilometrikisaSession(credentials: LoginCredentials | Sessi
     _credentials = credentials;
   }
 
-  return {
-    getTeamMemberStatistics: (teamSlug: string, contestSlug: string) =>
-      getTeamMemberStatistics(teamSlug, contestSlug, _credentials),
-    isLoggedIn: () => isLoggedIn(_credentials),
-    getUserLogEntries: (contestId: string, year: number) =>
-      getUserLogEntries(contestId, year, _credentials),
-    /**
-     * Return valid session credentials for later use or saving.
-     */
-    getSessionCredentials: () => _credentials,
-  };
+  return new KilometrikisaSession(_credentials);
+}
+
+class KilometrikisaSession {
+  constructor(private _credentials: SessionCredentials) {}
+
+  /**
+   * Fetch statistics of team members belonging to some kilometrikisa team.
+   * @param teamSlug  The name of the team in "slugified" format. You can pick the value from team page url on the kilometrikisa website.
+   * @param contestSlug The name of the contest in "slugified" format. You can pick the value from team page url on the kilometrikisa website when logged in.
+   */
+  public getTeamMemberStatistics(teamSlug: string, contestSlug: string) {
+    return getTeamMemberStatistics(teamSlug, contestSlug, this._credentials);
+  }
+
+  /**
+   * Return daily logged data for the user in specified contest in specified year.
+   * Note that there seems to be a bug in Kilometrikisa service. If new contest has been created but not started
+   * yet, even though we specify different year and contestId, this API will return "0" results for each day.
+   * TODO: Investigate this issue again when the next contest starts.
+   *
+   * @param contestId
+   * @param year
+   */
+  getUserContestLogEntries(contestId: string, year: number) {
+    return getUserLogEntries(contestId, year, this._credentials);
+  }
+
+  /**
+   * Check if the given token and session id are still valid.
+   */
+  public isSessionValid() {
+    return isLoggedIn(this._credentials);
+  }
+
+  /**
+   * Valid session credentials for later use or persisting to database.
+   */
+  public get sessionCredentials() {
+    return this._credentials;
+  }
 }
