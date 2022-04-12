@@ -1,6 +1,6 @@
-import { LoginCredentials } from '../auth/auth';
+import { SessionCredentials } from '../auth/auth';
 
-export function getAuthConfig(url: string, credentials: LoginCredentials) {
+export function getAuthConfig(url: string, credentials: SessionCredentials) {
   return {
     headers: {
       Referer: url,

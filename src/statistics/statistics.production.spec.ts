@@ -1,6 +1,6 @@
 import { getTeamMemberStatistics, getTeamStatistics } from './statistics';
 import { login } from '../index';
-import { LoginCredentials } from '../auth/auth';
+import { SessionCredentials } from '../auth/auth';
 
 describe('statistics', () => {
   describe('fetch team statistics from production', () => {
@@ -9,7 +9,7 @@ describe('statistics', () => {
     const teamSlug = process?.env['KILOMETRIKISA_TEAM_SLUG'] ?? '';
     const contestSlug = process?.env['KILOMETRIKISA_CONTEST_SLUG'] ?? '';
 
-    let credentials: LoginCredentials;
+    let credentials: SessionCredentials;
 
     beforeAll(async () => {
       credentials = await login(username, password);

@@ -4,7 +4,7 @@ import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handl
 const KILOMETRIKISA_LOGIN_URL = 'https://www.kilometrikisa.fi/accounts/login/';
 const KILOMETRIKISA_ACCOUNT_URL = 'https://www.kilometrikisa.fi/accounts/index/';
 
-export interface LoginCredentials {
+export interface SessionCredentials {
   token: string;
   sessionId: string;
 }
@@ -16,7 +16,7 @@ export interface LoginCredentials {
  * @param username
  * @param password
  */
-export async function login(username: string, password: string): Promise<LoginCredentials> {
+export async function login(username: string, password: string): Promise<SessionCredentials> {
   const csrfToken = await fetchCsrfToken();
 
   try {
@@ -66,7 +66,7 @@ async function submitLoginDetails(
   username: string,
   password: string,
   csrfToken: string
-): Promise<LoginCredentials> {
+): Promise<SessionCredentials> {
   const response = await axios.post(
     KILOMETRIKISA_LOGIN_URL,
     `username=${username}&password=${password}&csrfmiddlewaretoken=${csrfToken}`,
@@ -104,7 +104,7 @@ async function submitLoginDetails(
 /**
  * Check if the given token and session id are still valid.
  */
-export async function isLoggedIn(credentials: LoginCredentials): Promise<boolean> {
+export async function isLoggedIn(credentials: SessionCredentials): Promise<boolean> {
   const response = await axios.get(KILOMETRIKISA_ACCOUNT_URL, {
     headers: {
       Referer: KILOMETRIKISA_LOGIN_URL,

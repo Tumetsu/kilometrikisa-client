@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { LoginCredentials } from '../auth/auth';
+import { SessionCredentials } from '../auth/auth';
 import { parseKilometrikisaTeamPageStatistics } from './html-parser/team-parser/team-parser';
 import { parseKilometrikisaTeamMemberStatistics } from './html-parser/team-member-parser/team-member-parser';
 import {
@@ -36,7 +36,7 @@ export async function getTeamStatistics(teamSlug: string) {
 export async function getTeamMemberStatistics(
   teamSlug: string,
   contestSlug: string,
-  credentials: LoginCredentials
+  credentials: SessionCredentials
 ) {
   const url = `${kilometrikisaTeamPageBaseUrl}${teamSlug}/${contestSlug}/`;
   try {

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { LoginCredentials } from '../auth/auth';
+import { SessionCredentials } from '../auth/auth';
 import { getAuthConfig } from '../utils/requests';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
 
@@ -18,7 +18,7 @@ const kilometrikisaBaseUrl = 'https://www.kilometrikisa.fi';
 export async function getUserLogEntries(
   contestId: string,
   year: number,
-  credentials: LoginCredentials
+  credentials: SessionCredentials
 ) {
   const start = new Date(year, 1, 1).getTime() / 1000;
   const end = new Date(year, 12, 30).getTime() / 1000;
