@@ -25,15 +25,15 @@ export async function getTeamStatistics(teamSlug: string) {
 /**
  * Fetch statistics of team members belonging to some kilometrikisa team
  * @param teamSlug  The name of the team in "slugified" format. You can pick the value from team page url on the kilometrikisa website.
- * @param competitionSlug The name of the competition in "slugified" format. You can pick the value from team page url on the kilometrikisa website when logged in.
+ * @param contestSlug The name of the contest in "slugified" format. You can pick the value from team page url on the kilometrikisa website when logged in.
  * @param credentials
  */
 export async function getTeamMemberStatistics(
   teamSlug: string,
-  competitionSlug: string,
+  contestSlug: string,
   credentials: LoginCredentials
 ) {
-  const url = `${kilometrikisaTeamPageBaseUrl}${teamSlug}/${competitionSlug}/`;
+  const url = `${kilometrikisaTeamPageBaseUrl}${teamSlug}/${contestSlug}/`;
   try {
     const teamMemberStatisticsPage = await axios.get(url, getAuthConfig(url, credentials));
     return parseKilometrikisaTeamMemberStatistics(teamMemberStatisticsPage.data);
@@ -41,7 +41,7 @@ export async function getTeamMemberStatistics(
     transformAxiosError(
       err,
       404,
-      `Team ${teamSlug} for given competition ${competitionSlug} could not be found.`
+      `Team ${teamSlug} for given contest ${contestSlug} could not be found.`
     );
     throw err;
   }

@@ -1,8 +1,8 @@
 import { login } from '../index';
 import { LoginCredentials } from '../auth/auth';
-import { getUserLogEntries } from './competition-log';
+import { getUserLogEntries } from './contest-log';
 
-describe('competition log', () => {
+describe('contest log', () => {
   const username = process?.env['KILOMETRIKISA_USERNAME'] ?? '';
   const password = process?.env['KILOMETRIKISA_PASSWORD'] ?? '';
 
