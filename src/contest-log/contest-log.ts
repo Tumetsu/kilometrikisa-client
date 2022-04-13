@@ -25,7 +25,7 @@ export async function getUserContestLogEntries(
   const url = `${kilometrikisaBaseUrl}/contest/log_list_json/${contestId}/?start=${start}&end=${end}`;
 
   try {
-    const response = await axios.get(url, getAuthConfig(url, credentials));
+    const response = await axiosAuthGuard(axios.get(url, getAuthConfig(url, credentials)));
     return response.data.map(({ start, title }: { start: string; title: string }) => ({
       date: start,
       distance: parseFloat(title),

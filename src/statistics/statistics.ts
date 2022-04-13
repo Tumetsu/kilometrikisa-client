@@ -3,7 +3,7 @@ import { SessionCredentials } from '../auth/auth';
 import { parseKilometrikisaTeamPageStatistics } from './html-parser/team-parser/team-parser';
 import { parseKilometrikisaTeamMemberStatistics } from './html-parser/team-member-parser/team-member-parser';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
-import { getAuthConfig } from '../utils/requests';
+import { axiosAuthGuard, getAuthConfig } from '../utils/requests';
 
 const kilometrikisaBaseUrl = 'https://www.kilometrikisa.fi';
 const kilometrikisaTeamPageBaseUrl = `${kilometrikisaBaseUrl}/teams/`;
@@ -37,7 +37,9 @@ export async function getTeamMemberStatistics(
 ) {
   const url = `${kilometrikisaTeamPageBaseUrl}${teamSlug}/${contestSlug}/`;
   try {
-    const teamMemberStatisticsPage = await axios.get(url, getAuthConfig(url, credentials));
+    const teamMemberStatisticsPage = await axiosAuthGuard(
+      axios.get(url, getAuthConfig(url, credentials))
+    );
     return parseKilometrikisaTeamMemberStatistics(teamMemberStatisticsPage.data);
   } catch (err) {
     throw new KilometrikisaError(
