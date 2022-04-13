@@ -1,6 +1,6 @@
 import { isSessionValid, login, LoginCredentials, SessionCredentials } from './auth/auth';
 import { getTeamMemberStatistics } from './statistics/statistics';
-import { getUserContestLogEntries } from './contest-log/contest-log';
+import { getUserContestLogEntries, updateContestLog } from './contest-log/contest-log';
 
 export { KilometrikisaErrorCode, KilometrikisaError } from './utils/error-handling';
 export { getTeamStatistics } from './statistics/statistics';
@@ -55,6 +55,17 @@ class KilometrikisaSession {
    */
   getUserContestLogEntries(contestId: string, year: number) {
     return getUserContestLogEntries(contestId, year, this._credentials);
+  }
+
+  /**
+   * Update distance of a single date to the Kilometrikisa.
+   *
+   * @param contestId ContestId of the contest the entry belongs to.
+   * @param date Date in form of YYYY-MM-DD.
+   * @param distance Distance in kilometers.
+   */
+  updateContestLog(contestId: number, date: string, distance: number) {
+    return updateContestLog(contestId, date, distance, this._credentials);
   }
 
   /**
