@@ -19,7 +19,7 @@ export async function getUserContestLogEntries(
   contestId: string,
   year: number,
   credentials: SessionCredentials
-) {
+): Promise<{ date: string; distance: number }[]> {
   const start = new Date(year, 1, 1).getTime() / 1000;
   const end = new Date(year, 12, 30).getTime() / 1000;
   const url = `${kilometrikisaBaseUrl}/contest/log_list_json/${contestId}/?start=${start}&end=${end}`;
