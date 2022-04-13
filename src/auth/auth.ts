@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
+import { queryStringify } from '../utils/requests';
 
 const KILOMETRIKISA_LOGIN_URL = 'https://www.kilometrikisa.fi/accounts/login/';
 const KILOMETRIKISA_ACCOUNT_URL = 'https://www.kilometrikisa.fi/accounts/index/';
@@ -71,11 +72,15 @@ async function submitLoginDetails(
 ): Promise<SessionCredentials> {
   const response = await axios.post(
     KILOMETRIKISA_LOGIN_URL,
-    `username=${username}&password=${password}&csrfmiddlewaretoken=${csrfToken}`,
+    queryStringify({
+      username,
+      password,
+      csrfmiddlewaretoken: csrfToken,
+    }),
     {
       headers: {
         Referer: KILOMETRIKISA_LOGIN_URL,
-        Cookie: `csrftoken=${csrfToken}`,
+        Cookie: queryStringify({ csrftoken: csrfToken }),
       },
       withCredentials: true,
       maxRedirects: 0, // The sessionid is in the redirect response so do not follow that

@@ -8,3 +8,11 @@ export function getAuthConfig(url: string, credentials: SessionCredentials) {
     },
   };
 }
+
+export function queryStringify(obj: Record<string, string | number>) {
+  let queryString = '';
+  for (const [key, value] of Object.entries(obj)) {
+    queryString += `&${key}=${value}`;
+  }
+  return queryString.substring(1);
+}
