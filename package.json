@@ -36,7 +36,7 @@
     "lint:fix": "eslint ./src --ext .ts --fix",
     "prettier:fix": "prettier --write --config .prettierrc ./",
     "prettier:check": "prettier --check --config .prettierrc ./",
-    "prepublishOnly": "npm test && npm run lint && npm run build",
+    "prepublishOnly": "rm -rf dist && npm test && npm run lint && npm run build",
     "preversion": "npm run lint",
     "postpublish": "git push && ./publish-docs.sh",
     "typedoc:generate": "typedoc ./src/index.ts --theme github-wiki --out wiki/ --excludeExternals"
