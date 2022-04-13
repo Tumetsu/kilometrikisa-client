@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { SessionCredentials } from '../auth/auth';
-import { getAuthConfig } from '../utils/requests';
+import { axiosAuthGuard, getAuthConfig, queryStringify } from '../utils/requests';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
 
 const kilometrikisaBaseUrl = 'https://www.kilometrikisa.fi';
@@ -36,6 +36,52 @@ export async function getUserContestLogEntries(
         KilometrikisaErrorCode.USER_CONTEST_LOG_NOT_FOUND,
         'Server responded with an error. Are the contestId and year valid?'
       );
+    }
+    throw err;
+  }
+}
+
+/**
+ * Update contest log of logged in user.
+ *
+ * @param contestId
+ * @param date
+ * @param distance
+ * @param credentials
+ */
+export async function updateContestLog(
+  contestId: number,
+  date: string,
+  distance: number,
+  credentials: SessionCredentials
+) {
+  const url = `${kilometrikisaBaseUrl}/contest/log-save/`;
+  const body = queryStringify({
+    contest_id: contestId,
+    km_date: date,
+    km_amount: distance,
+    csrfmiddlewaretoken: credentials.token,
+  });
+
+  try {
+    await axiosAuthGuard(axios.post(url, body, getAuthConfig(url, credentials)));
+    return;
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      const { response } = err;
+
+      if (response?.status === 400) {
+        throw new KilometrikisaError(
+          KilometrikisaErrorCode.COULD_NOT_UPDATE_COMPETITION_LOG,
+          response.data.response
+        );
+      }
+      if (response?.status === 404) {
+        throw new KilometrikisaError(
+          KilometrikisaErrorCode.COULD_NOT_UPDATE_COMPETITION_LOG,
+          'Could not find contest log to update. Is contestId correct?'
+        );
+      }
     }
     throw err;
   }
