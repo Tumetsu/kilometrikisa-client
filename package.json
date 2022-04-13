@@ -23,6 +23,8 @@
     "prettier": "^2.6.2",
     "ts-jest": "^27.1.4",
     "typedoc": "^0.22.15",
+    "typedoc-github-wiki-theme": "^1.0.0",
+    "typedoc-plugin-markdown": "^3.12.0",
     "typedoc-plugin-missing-exports": "^0.22.6",
     "typescript": "^4.6.3"
   },
@@ -36,7 +38,7 @@
     "prettier:check": "prettier --check --config .prettierrc ./",
     "prepublishOnly": "npm test && npm run lint && npm run build",
     "preversion": "npm run lint",
-    "typedoc:generate": "typedoc ./src/index.ts"
+    "typedoc:generate": "typedoc ./src/index.ts --theme github-wiki --out wiki/ --excludeExternals"
   },
   "repository": {
     "type": "git",

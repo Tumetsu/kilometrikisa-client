@@ -6,6 +6,8 @@ A client library to scrape data from Kilometrikisa.fi website. Supports scraping
 as team member data of user's team. Inspired by the original implementation of [Strava2Kilometrikisa](https://github.com/jaamo/strava2kilometrikisa) and rewritten
 completely with Typescript.
 
+[API Reference](https://github.com/Tumetsu/kilometrikisa-client/wiki/Exports)
+
 ## Features
 
 - Login to Kilometrikisa by username and password
