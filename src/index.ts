@@ -4,7 +4,7 @@ import { getUserContestLogEntries, updateContestLog } from './contest-log/contes
 
 export { KilometrikisaErrorCode, KilometrikisaError } from './utils/error-handling';
 export { getTeamStatistics } from './statistics/statistics';
-export { getContestId, getContestIdByContestSlug } from './contest/contest';
+export { getContest, getContestByContestSlug } from './contest/contest';
 
 /**
  * Get a client class with API-methods to access Kilometrikisa features which require authentication with user account.
