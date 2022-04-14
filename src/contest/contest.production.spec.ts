@@ -1,13 +1,16 @@
-import { getContestId } from './contest';
+import { getContest } from './contest';
 
 describe('contests', () => {
-  describe('getContestId', () => {
-    it('should parse contest id from given contest page', async () => {
-      const contestId = await getContestId(
-        'https://www.kilometrikisa.fi/contests/kilometrikisa-2022/'
-      );
-      expect(contestId).toBe(47);
+  describe('getContest', () => {
+    it('should parse contest from given contest page', async () => {
+      const contest = await getContest('https://www.kilometrikisa.fi/contests/kilometrikisa-2022/');
+      expect(contest).toEqual({
+        contestId: 47,
+        name: 'Kilometrikisa 2022',
+        startDate: '2022-05-01',
+        endDate: '2022-09-22',
+        url: 'https://www.kilometrikisa.fi/contests/kilometrikisa-2022/',
+      });
     });
   });
 });
-
