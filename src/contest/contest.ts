@@ -2,7 +2,8 @@ import * as cheerio from 'cheerio';
 import axios from 'axios';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
 
-const contestBaseUrl = 'https://www.kilometrikisa.fi/contests';
+const kilometrikisaBaseUrl = 'https://www.kilometrikisa.fi';
+const contestBaseUrl = `${kilometrikisaBaseUrl}/contests`;
 
 export interface Contest {
   contestId: number;
@@ -10,7 +11,9 @@ export interface Contest {
   startDate: string;
   endDate: string;
   url: string;
+  isOpen: boolean;
 }
+
 /**
  * An utility to fetch `Contest` with just contest page's slug.
  *
@@ -44,6 +47,46 @@ export async function getContest(contestUrl: string): Promise<Contest> {
   }
 }
 
+/**
+ * Fetch latest `Contest` in Kilometrikisa.
+ */
+export async function getLatestContest(): Promise<Contest> {
+  const allContestUrls = await getAllContestUrls();
+
+  if (!allContestUrls.length) {
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.COULD_NOT_PARSE_RESPONSE,
+      'Did not found competition urls. Has Kilometrikisa website changed?'
+    );
+  }
+
+  return await getContest(allContestUrls[0]);
+}
+
+/**
+ * Returns all contest urls from the kilometrikisa site navigation menu.
+ * Consider exposing this method via API to end users.
+ */
+async function getAllContestUrls() {
+  try {
+    const response = await axios.get(kilometrikisaBaseUrl);
+    const $ = cheerio.load(response.data);
+
+    const contestList = $('li.has-dropdown a:contains("Tulokset")').next();
+    return contestList
+      .find('li a')
+      .map(function () {
+        return `${kilometrikisaBaseUrl}${$(this).prop('href')}`.replace('/teams/', '/');
+      })
+      .toArray();
+  } catch (err) {
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.COULD_NOT_PARSE_RESPONSE,
+      'Could not parse all competition urls from the response'
+    );
+  }
+}
+
 function parseContestName($: cheerio.CheerioAPI) {
   return cheerio.load($.html())('.contest-date').parent().children().remove().end().text().trim();
 }
@@ -57,9 +100,14 @@ function parseContestDates($: cheerio.CheerioAPI) {
   const contestDate = $('.contest-date').text();
   const matches = [...contestDate.matchAll(/\d\d\.\d\d\.\d\d\d\d/g)];
 
-  return {
+  const dates = {
     startDate: convertDatesToISODateString(matches[0][0]),
     endDate: convertDatesToISODateString(matches[1][0]),
+  };
+
+  return {
+    isOpen: isOpen(dates),
+    ...dates,
   };
 }
 
@@ -67,4 +115,14 @@ function parseContestId(htmlBody: string) {
   // Override TS null check with as. We want to throw an error if parsing fails
   const matches = htmlBody.match(/\/json-search\/(\d+)/) as RegExpMatchArray;
   return parseInt(matches[1]);
+}
+
+function isOpen(dates: { startDate: string; endDate: string }) {
+  const { startDate, endDate } = dates;
+
+  const startMs = new Date(startDate).getTime();
+  const currentMs = Date.now();
+  const endMs = new Date(endDate).getTime();
+
+  return startMs <= currentMs && currentMs <= endMs;
 }
