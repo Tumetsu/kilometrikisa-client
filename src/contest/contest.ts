@@ -6,11 +6,18 @@ const kilometrikisaBaseUrl = 'https://www.kilometrikisa.fi';
 const contestBaseUrl = `${kilometrikisaBaseUrl}/contests`;
 
 export interface Contest {
+  /**
+   * Id which identifies contests in API calls.
+   */
   contestId: number;
   name: string;
   startDate: string;
   endDate: string;
   url: string;
+  /**
+   * Is the competition open currently. Utility property based on `startDate` and `endDate`. Note that it is usually
+   * possible to submit entries to Kilometrikisa contest log few days after it has officially closed.
+   */
   isOpen: boolean;
 }
 
