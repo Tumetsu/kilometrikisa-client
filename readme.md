@@ -34,8 +34,11 @@ const session = await kilometrikisaSession({username: 'username', password: 'pas
 // Fetch member statistics of your team
 const memberData = await session.getTeamMemberStatistics('team-slug', 'contest-slug');
 
-// Update user's contest log for contest with contestId 43
-await client.updateContestLog(43, '2022-05-01', 10);
+// Fetch latest contest
+const contest = await getLatestContest();
+
+// Update user's contest log for latest contest
+await client.updateContestLog(contest.contestId, '2022-05-01', 10);
 
 // Fetch public team statistics for current contest
 const teamData = await getTeamStatistics('team-slug');
