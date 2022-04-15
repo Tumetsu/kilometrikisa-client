@@ -1,4 +1,4 @@
-import { isSessionValid, login, LoginCredentials, SessionCredentials } from './auth/auth';
+import { isSessionValid, login, LoginCredentials, logout, SessionCredentials } from './auth/auth';
 import { getTeamMemberStatistics } from './statistics/statistics';
 import { getUserContestLogEntries, updateContestLog } from './contest-log/contest-log';
 
@@ -83,6 +83,14 @@ export class KilometrikisaSession {
    */
   public isSessionValid() {
     return isSessionValid(this._credentials);
+  }
+
+  /**
+   * Log out of the Kilometrikisa. Ends session and invalidates the `SessionCredential`. Further requests
+   * require new login with username and password.
+   */
+  public logout() {
+    return logout(this._credentials);
   }
 
   /**

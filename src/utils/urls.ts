@@ -1,6 +1,7 @@
 export const KILOMETRIKISA_BASE_URL = 'https://www.kilometrikisa.fi';
 
 export const KILOMETRIKISA_LOGIN_URL = `${KILOMETRIKISA_BASE_URL}/accounts/login/`;
+export const KILOMETRIKISA_LOGOUT_URL = `${KILOMETRIKISA_BASE_URL}/accounts/logout/`;
 export const KILOMETRIKISA_ACCOUNT_URL = `${KILOMETRIKISA_BASE_URL}/accounts/index/`;
 
 export const CONTEST_BASE_URL = `${KILOMETRIKISA_BASE_URL}/contests/`;
