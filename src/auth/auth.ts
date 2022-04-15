@@ -1,7 +1,11 @@
 import axios from 'axios';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
-import { queryStringify } from '../utils/requests';
-import { KILOMETRIKISA_ACCOUNT_URL, KILOMETRIKISA_LOGIN_URL } from '../utils/urls';
+import { getAuthConfig, queryStringify } from '../utils/requests';
+import {
+  KILOMETRIKISA_ACCOUNT_URL,
+  KILOMETRIKISA_LOGIN_URL,
+  KILOMETRIKISA_LOGOUT_URL,
+} from '../utils/urls';
 
 export interface SessionCredentials {
   token: string;
@@ -121,4 +125,13 @@ export async function isSessionValid(credentials: SessionCredentials): Promise<b
   // try to see if the page contains "Kirjaudu sisään" keywords to deduce if the session is still valid.
   // TODO: Maybe we could instead try to POST some nonsense to the server and check if we get 403 as a response...?
   return !response.data.includes('Kirjaudu sisään');
+}
+
+/**
+ * Logout of the Kilometrikisa service. Ends session and invalidates the credentials.
+ *
+ * @param credentials
+ */
+export async function logout(credentials: SessionCredentials) {
+  await axios.get(KILOMETRIKISA_LOGOUT_URL, getAuthConfig(KILOMETRIKISA_LOGOUT_URL, credentials));
 }
