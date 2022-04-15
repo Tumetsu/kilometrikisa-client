@@ -63,6 +63,12 @@ cp .env.template .env
 npm run test:production
 ```
 
+## How to release
+
+1. Bump up the package version with `npm version major|minor|patch` and push the commit to main
+2. Create Github release
+3. Let Github Actions to deploy the release automatically to the NPM.
+
 ## Contributing
 
 - Please open an issue about the bug, feature request etc. first to open a discussion
