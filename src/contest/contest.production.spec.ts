@@ -13,6 +13,7 @@ describe('contests', () => {
         startDate: '2022-05-01',
         endDate: '2022-09-22',
         url: 'https://www.kilometrikisa.fi/contests/kilometrikisa-2022/',
+        slug: 'kilometrikisa-2022',
       });
     });
   });

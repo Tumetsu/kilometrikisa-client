@@ -15,6 +15,10 @@ export interface Contest {
   endDate: string;
   url: string;
   /**
+   * Last part of the contest url. E.g. `kilometrikisa-2022`.
+   */
+  slug: string;
+  /**
    * Is the competition open currently. Utility property based on `startDate` and `endDate`. Note that it is usually
    * possible to submit entries to Kilometrikisa contest log few days after it has officially closed.
    */
@@ -44,6 +48,7 @@ export async function getContest(contestUrl: string): Promise<Contest> {
       contestId: parseContestId($.html()),
       name: parseContestName($),
       url: contestUrl,
+      slug: getSlugFromUrl(contestUrl),
       ...parseContestDates($),
     };
   } catch (err) {
@@ -132,4 +137,9 @@ function isOpen(dates: { startDate: string; endDate: string }) {
   const endMs = new Date(endDate).getTime();
 
   return startMs <= currentMs && currentMs <= endMs;
+}
+
+function getSlugFromUrl(url: string) {
+  const parts = url.split('/').filter(part => part);
+  return parts[parts.length - 1];
 }

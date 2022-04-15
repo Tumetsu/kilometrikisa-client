@@ -39,6 +39,7 @@ describe('contests', () => {
         endDate: '2021-09-20',
         isOpen: false,
         url: 'https://www.kilometrikisa.fi/contests/kilometrikisa-2022/',
+        slug: 'kilometrikisa-2022',
       });
     });
 
@@ -102,6 +103,7 @@ describe('contests', () => {
         startDate: '2021-05-01',
         endDate: '2021-09-20',
         url: 'https://www.kilometrikisa.fi/contests/kilometrikisa-2022/',
+        slug: 'kilometrikisa-2022',
       });
     });
 
