@@ -49,6 +49,5 @@ export async function getTeamMemberStatistics(
       KilometrikisaErrorCode.TEAM_STATISTICS_NOT_FOUND,
       `Team ${teamSlug} for given contest ${contestSlug} could not be found.`
     );
-    throw err;
   }
 }
