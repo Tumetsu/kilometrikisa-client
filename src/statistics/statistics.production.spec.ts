@@ -1,10 +1,9 @@
 import { getTeamMemberStatistics, getTeamStatistics } from './statistics';
 import { login, SessionCredentials } from '../auth/auth';
+import { getEnvCredentials } from '../utils/tests';
 
 describe('statistics', () => {
   describe('fetch team statistics from production', () => {
-    const username = process?.env['KILOMETRIKISA_USERNAME'] ?? '';
-    const password = process?.env['KILOMETRIKISA_PASSWORD'] ?? '';
     const teamSlug = process?.env['KILOMETRIKISA_TEAM_SLUG'] ?? '';
     const contestSlug = process?.env['KILOMETRIKISA_CONTEST_SLUG'] ?? '';
 
@@ -12,7 +11,7 @@ describe('statistics', () => {
 
     describe('team member statistics', () => {
       beforeAll(async () => {
-        credentials = await login({ username, password });
+        credentials = await login(getEnvCredentials());
       });
 
       it('should fetch team member statistics', async () => {
