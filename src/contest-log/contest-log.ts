@@ -2,8 +2,7 @@ import axios from 'axios';
 import { SessionCredentials } from '../auth/auth';
 import { axiosAuthGuard, getAuthConfig, queryStringify } from '../utils/requests';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
-
-const kilometrikisaBaseUrl = 'https://www.kilometrikisa.fi';
+import { CONTEST_LOG_LIST_URL, CONTEST_LOG_SAVE_URL } from '../utils/urls';
 
 /**
  * Return daily logged data for the user in specified contest in specified year.
@@ -22,7 +21,7 @@ export async function getUserContestLogEntries(
 ): Promise<{ date: string; distance: number }[]> {
   const start = new Date(year, 1, 1).getTime() / 1000;
   const end = new Date(year, 12, 30).getTime() / 1000;
-  const url = `${kilometrikisaBaseUrl}/contest/log_list_json/${contestId}/?start=${start}&end=${end}`;
+  const url = `${CONTEST_LOG_LIST_URL}${contestId}/?start=${start}&end=${end}`;
 
   try {
     const response = await axiosAuthGuard(axios.get(url, getAuthConfig(url, credentials)));
@@ -55,7 +54,6 @@ export async function updateContestLog(
   distance: number,
   credentials: SessionCredentials
 ) {
-  const url = `${kilometrikisaBaseUrl}/contest/log-save/`;
   const body = queryStringify({
     contest_id: contestId,
     km_date: date,
@@ -64,7 +62,9 @@ export async function updateContestLog(
   });
 
   try {
-    await axiosAuthGuard(axios.post(url, body, getAuthConfig(url, credentials)));
+    await axiosAuthGuard(
+      axios.post(CONTEST_LOG_SAVE_URL, body, getAuthConfig(CONTEST_LOG_SAVE_URL, credentials))
+    );
     return;
   } catch (err) {
     if (axios.isAxiosError(err)) {

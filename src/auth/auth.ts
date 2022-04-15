@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
 import { queryStringify } from '../utils/requests';
-
-const KILOMETRIKISA_LOGIN_URL = 'https://www.kilometrikisa.fi/accounts/login/';
-const KILOMETRIKISA_ACCOUNT_URL = 'https://www.kilometrikisa.fi/accounts/index/';
+import { KILOMETRIKISA_ACCOUNT_URL, KILOMETRIKISA_LOGIN_URL } from '../utils/urls';
 
 export interface SessionCredentials {
   token: string;

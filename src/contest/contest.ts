@@ -1,9 +1,7 @@
 import * as cheerio from 'cheerio';
 import axios from 'axios';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
-
-const kilometrikisaBaseUrl = 'https://www.kilometrikisa.fi';
-const contestBaseUrl = `${kilometrikisaBaseUrl}/contests`;
+import { CONTEST_BASE_URL, KILOMETRIKISA_BASE_URL } from '../utils/urls';
 
 export interface Contest {
   /**
@@ -31,7 +29,7 @@ export interface Contest {
  * @param contestSlug Slug of the contest from contest page url. For example: `kilometrikisa-2022`
  */
 export function getContestByContestSlug(contestSlug: string): Promise<Contest> {
-  return getContest(`${contestBaseUrl}/${contestSlug}/`);
+  return getContest(`${CONTEST_BASE_URL}${contestSlug}/`);
 }
 
 /**
@@ -81,14 +79,14 @@ export async function getLatestContest(): Promise<Contest> {
  */
 async function getAllContestUrls() {
   try {
-    const response = await axios.get(kilometrikisaBaseUrl);
+    const response = await axios.get(KILOMETRIKISA_BASE_URL);
     const $ = cheerio.load(response.data);
 
     const contestList = $('li.has-dropdown a:contains("Tulokset")').next();
     return contestList
       .find('li a')
       .map(function () {
-        return `${kilometrikisaBaseUrl}${$(this).prop('href')}`.replace('/teams/', '/');
+        return `${KILOMETRIKISA_BASE_URL}${$(this).prop('href')}`.replace('/teams/', '/');
       })
       .toArray();
   } catch (err) {
