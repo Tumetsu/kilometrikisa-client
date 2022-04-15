@@ -1,15 +1,13 @@
 import { login, SessionCredentials } from '../auth/auth';
 import { getUserContestLogEntries, updateContestLog } from './contest-log';
 import { KilometrikisaErrorCode } from '../utils/error-handling';
+import { getEnvCredentials } from '../utils/tests';
 
 describe('contest log', () => {
-  const username = process?.env['KILOMETRIKISA_USERNAME'] ?? '';
-  const password = process?.env['KILOMETRIKISA_PASSWORD'] ?? '';
-
   let credentials: SessionCredentials;
 
   beforeAll(async () => {
-    credentials = await login({ username, password });
+    credentials = await login(getEnvCredentials());
   });
 
   it("should fetch user's distance entries", async () => {

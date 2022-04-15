@@ -1,13 +1,9 @@
 import { login, isSessionValid } from './auth';
+import { getEnvCredentials } from '../utils/tests';
 
-// NOTE: These tests are ran against the production to verify the integration and requires credentials to be set
-// to the .env file
 describe('login flow against production', () => {
-  const username = process?.env['KILOMETRIKISA_USERNAME'] ?? '';
-  const password = process?.env['KILOMETRIKISA_PASSWORD'] ?? '';
-
   it('should log in and verify that user is logged in', async () => {
-    const credentials = await login({ username, password });
+    const credentials = await login(getEnvCredentials());
     expect(credentials.token).not.toBeNull();
 
     const status = await isSessionValid(credentials);
