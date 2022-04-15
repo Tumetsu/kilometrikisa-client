@@ -5,6 +5,9 @@ import { KilometrikisaError, KilometrikisaErrorCode } from '../../../utils/error
 export interface TeamMemberDistanceStatistics {
   placement: number;
   name: string;
+  /**
+   * Present only if the scraping user account is the captain of the team.
+   */
   email?: string | null;
   totalDistance: number;
   distanceByRegularBike: number;
@@ -15,7 +18,10 @@ export interface TeamMemberDistanceStatistics {
 export interface TeamMemberTimeStatistics {
   placement: number;
   name: string;
-  email: string;
+  /**
+   * Present only if the scraping user account is the captain of the team.
+   */
+  email?: string | null;
   time: {
     hours: number;
     minutes: number;

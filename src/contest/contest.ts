@@ -35,7 +35,7 @@ export function getContestByContestSlug(contestSlug: string): Promise<Contest> {
 }
 
 /**
- * Scrape contest data from given contest page.
+ * Scrape `Contest` data from given contest page.
  *
  * @param contestUrl Url of a contest-page. For example https://www.kilometrikisa.fi/contests/kilometrikisa-2022/
  */
