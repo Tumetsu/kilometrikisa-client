@@ -6,6 +6,15 @@ export { KilometrikisaErrorCode, KilometrikisaError } from './utils/error-handli
 export { getTeamStatistics } from './statistics/statistics';
 export { getContest, getContestByContestSlug, getLatestContest } from './contest/contest';
 
+// Interfaces
+export { LoginCredentials, SessionCredentials } from './auth/auth';
+export { TeamStatistics, TeamSeries } from './statistics/html-parser/team-parser/team-parser';
+export {
+  TeamMemberDistanceStatistics,
+  TeamMemberTimeStatistics,
+} from './statistics/html-parser/team-member-parser/team-member-parser';
+export { Contest } from './contest/contest';
+
 /**
  * Get a client class with API-methods to access Kilometrikisa features which require authentication with user account.
  * You can authenticate either with username and password or with token and sessionId.
@@ -33,7 +42,7 @@ export async function kilometrikisaSession(credentials: LoginCredentials | Sessi
   return new KilometrikisaSession(_credentials);
 }
 
-class KilometrikisaSession {
+export class KilometrikisaSession {
   constructor(private _credentials: SessionCredentials) {}
 
   /**
