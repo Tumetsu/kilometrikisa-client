@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../../../utils/error-handling';
+import { CheerioAPI } from 'cheerio';
 
 interface DataValuePair {
   title: string;
@@ -24,10 +25,28 @@ export interface TeamStatistics {
   savedCO2: number;
 }
 
-export function parseKilometrikisaTeamPageStatistics(htmlData: string): TeamStatistics {
+export function parseKilometrikisaTeamPageStatistics(htmlData: string): TeamStatistics[] {
   const $ = cheerio.load(htmlData);
 
-  const dataItemElements = $('.team-contest-table .data-item');
+  const contestTables = $('.team-contest-table');
+  const results = contestTables
+    .map(function (i, el) {
+      return parseContestTable($, $(el));
+    })
+    .toArray();
+
+  if (!results.length) {
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.COULD_NOT_PARSE_RESPONSE,
+      'Could not parse data from Kilometrikisa team page.'
+    );
+  }
+
+  return results;
+}
+
+function parseContestTable($: CheerioAPI, table: cheerio.Cheerio<cheerio.Element>) {
+  const dataItemElements = table.find('.data-item');
   const dataValues: DataValuePair[] = dataItemElements
     .map((i, element) => {
       return extractDataFromElement($, element);
