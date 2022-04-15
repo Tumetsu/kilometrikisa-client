@@ -81,10 +81,7 @@ npm run test:production
 
 ### Pull requests and commits
 
-The pull requests should conform the following guidelines if possible:
+If possible pull requests should conform the following guidelines:
 
 - Use rebase work flow. Do not merge `main` branch to your feature branch. Use `git rebase main` instead
 - Commit names should be descriptive and in imperative format. E.g. "Add support for X"
-- Before merge clean possible fixup commits by squashing
-
-However, if any of those rules seem confusing, don't let that stop you from contributing and opening a PR!
