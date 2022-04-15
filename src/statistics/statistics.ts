@@ -9,7 +9,10 @@ const kilometrikisaBaseUrl = 'https://www.kilometrikisa.fi';
 const kilometrikisaTeamPageBaseUrl = `${kilometrikisaBaseUrl}/teams/`;
 
 /**
- * Fetch team statistics from Kilometrikisa. Does not need authentication.
+ * Fetch team statistics from Kilometrikisa. Does not need authentication. Returns all statistic tables
+ * as separate data-objects. One team page might contain two statistic tables. One for regular cycling and one for
+ * electric bikes.
+ *
  * @param teamSlug  The name of the team in "slugified" format. You can pick the value from team page url on the kilometrikisa website.
  */
 export async function getTeamStatistics(teamSlug: string) {

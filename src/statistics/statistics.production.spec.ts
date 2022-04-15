@@ -10,18 +10,20 @@ describe('statistics', () => {
 
     let credentials: SessionCredentials;
 
-    beforeAll(async () => {
-      credentials = await login({ username, password });
+    describe('team member statistics', () => {
+      beforeAll(async () => {
+        credentials = await login({ username, password });
+      });
+
+      it('should fetch team member statistics', async () => {
+        const results = await getTeamMemberStatistics(teamSlug, contestSlug, credentials);
+        expect(results.distanceStatistics.length).toBeGreaterThan(0);
+      });
     });
 
     it('should fetch team statistics', async () => {
-      const results = await getTeamStatistics('vincit-forza');
-      expect(results).not.toBeNull();
-    });
-
-    it('should fetch team member statistics', async () => {
-      const results = await getTeamMemberStatistics(teamSlug, contestSlug, credentials);
-      expect(results.distanceStatistics.length).toBeGreaterThan(0);
+      const results = await getTeamStatistics('elomatic');
+      expect(results.length).toBe(2);
     });
   });
 });
