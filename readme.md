@@ -31,11 +31,11 @@ import { getTeamStatistics, kilometrikisaSession } from 'kilometrikisa-client';
 // Log in to get session
 const session = await kilometrikisaSession({username: 'username', password: 'password'});
 
-// Fetch member statistics of your team
-const memberData = await session.getTeamMemberStatistics('team-slug', 'contest-slug');
-
 // Fetch latest contest
 const contest = await getLatestContest();
+
+// Fetch member statistics of your team
+const memberData = await session.getTeamMemberStatistics('team-slug', contest.slug);
 
 // Update user's contest log for latest contest
 await client.updateContestLog(contest.contestId, '2022-05-01', 10);
