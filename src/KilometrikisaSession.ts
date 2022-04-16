@@ -1,6 +1,10 @@
 import { isSessionValid, logout, SessionCredentials } from './auth/auth';
 import { getTeamMemberStatistics } from './statistics/statistics';
-import { getUserContestLogEntries, updateContestLog } from './contest-log/contest-log';
+import {
+  getUserContestLogEntries,
+  updateContestLog,
+  updateMinuteContestLog,
+} from './contest-log/contest-log';
 
 /**
  * A class which offers API for all requests which require authentication to the
@@ -41,6 +45,25 @@ export class KilometrikisaSession {
    */
   updateContestLog(contestId: number, date: string, distance: number, isEbike = false) {
     return updateContestLog(contestId, date, distance, isEbike, this.credentials);
+  }
+
+  /**
+   * Update minutes and hours of a single date to the Kilometrikisa.
+   *
+   * @param contestId ContestId of the contest the entry belongs to.
+   * @param date Date in form of YYYY-MM-DD.
+   * @param hours Hours spent riding at specified date
+   * @param minutes Minutes spent riding at specified date
+   * @param isEbike Should the log be flagged as ebike
+   */
+  updateMinuteContestLog(
+    contestId: number,
+    date: string,
+    hours: number,
+    minutes: number,
+    isEbike = false
+  ) {
+    return updateMinuteContestLog(contestId, date, hours, minutes, isEbike, this.credentials);
   }
 
   /**

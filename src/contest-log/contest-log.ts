@@ -2,7 +2,12 @@ import axios from 'axios';
 import { SessionCredentials } from '../auth/auth';
 import { axiosAuthGuard, getAuthConfig, queryStringify } from '../utils/requests';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
-import { CONTEST_LOG_LIST_URL, CONTEST_LOG_SAVE_URL } from '../utils/urls';
+import {
+  CONTEST_LOG,
+  CONTEST_LOG_LIST_URL,
+  CONTEST_LOG_SAVE_URL,
+  MINUTE_CONTEST_LOG_SAVE_URL,
+} from '../utils/urls';
 
 /**
  * Return daily logged data for the user in specified contest in specified year.
@@ -66,26 +71,68 @@ export async function updateContestLog(
 
   try {
     await axiosAuthGuard(
-      axios.post(CONTEST_LOG_SAVE_URL, body, getAuthConfig(CONTEST_LOG_SAVE_URL, credentials))
+      axios.post(CONTEST_LOG_SAVE_URL, body, getAuthConfig(CONTEST_LOG, credentials))
     );
     return;
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-      const { response } = err;
-
-      if (response?.status === 400) {
-        throw new KilometrikisaError(
-          KilometrikisaErrorCode.COULD_NOT_UPDATE_COMPETITION_LOG,
-          response.data.response
-        );
-      }
-      if (response?.status === 404) {
-        throw new KilometrikisaError(
-          KilometrikisaErrorCode.COULD_NOT_UPDATE_COMPETITION_LOG,
-          'Could not find contest log to update. Is contestId correct?'
-        );
-      }
-    }
+    handleAxiosError(err);
     throw err;
+  }
+}
+
+/**
+ * Update minute contest
+ *
+ * @param contestId
+ * @param date
+ * @param hours
+ * @param minutes
+ * @param isEbike
+ * @param credentials
+ */
+export async function updateMinuteContestLog(
+  contestId: number,
+  date: string,
+  hours: number,
+  minutes: number,
+  isEbike: boolean,
+  credentials: SessionCredentials
+) {
+  const body = queryStringify({
+    contest_id: contestId,
+    date: date,
+    hours,
+    minutes,
+    is_electric: isEbike ? 1 : 0,
+    csrfmiddlewaretoken: credentials.token,
+  });
+
+  try {
+    await axiosAuthGuard(
+      axios.post(MINUTE_CONTEST_LOG_SAVE_URL, body, getAuthConfig(CONTEST_LOG, credentials))
+    );
+    return;
+  } catch (err) {
+    handleAxiosError(err);
+    throw err;
+  }
+}
+
+function handleAxiosError(err: unknown) {
+  if (axios.isAxiosError(err)) {
+    const { response } = err;
+
+    if (response?.status === 400) {
+      throw new KilometrikisaError(
+        KilometrikisaErrorCode.COULD_NOT_UPDATE_COMPETITION_LOG,
+        response.data.response
+      );
+    }
+    if (response?.status === 404) {
+      throw new KilometrikisaError(
+        KilometrikisaErrorCode.COULD_NOT_UPDATE_COMPETITION_LOG,
+        'Could not find contest log to update. Is contestId correct?'
+      );
+    }
   }
 }
