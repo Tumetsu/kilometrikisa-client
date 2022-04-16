@@ -1,5 +1,5 @@
 import { login, SessionCredentials } from '../auth/auth';
-import { getUserContestLogEntries, updateContestLog } from './contest-log';
+import { getUserContestLogEntries, updateContestLog, updateMinuteContestLog } from './contest-log';
 import { KilometrikisaErrorCode } from '../utils/error-handling';
 import { getEnvCredentials } from '../utils/tests';
 
@@ -19,6 +19,17 @@ describe('contest log', () => {
     it('should throw an error if authentication failed', async () => {
       await expect(
         updateContestLog(43, '2023-05-01', 10, false, {
+          token: credentials.token,
+          sessionId: 'badsession',
+        })
+      ).rejects.toBeKilometrikisaError(KilometrikisaErrorCode.EXPIRED_SESSION);
+    });
+  });
+
+  describe('updateMinuteContestLog', () => {
+    it('should throw an error if authentication failed', async () => {
+      await expect(
+        updateMinuteContestLog(43, '2023-05-01', 1, 30, false, {
           token: credentials.token,
           sessionId: 'badsession',
         })
