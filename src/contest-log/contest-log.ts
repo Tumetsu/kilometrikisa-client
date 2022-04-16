@@ -46,18 +46,21 @@ export async function getUserContestLogEntries(
  * @param contestId
  * @param date
  * @param distance
+ * @param isEbike
  * @param credentials
  */
 export async function updateContestLog(
   contestId: number,
   date: string,
   distance: number,
+  isEbike: boolean,
   credentials: SessionCredentials
 ) {
   const body = queryStringify({
     contest_id: contestId,
     km_date: date,
     km_amount: distance,
+    is_electric: isEbike ? 1 : 0,
     csrfmiddlewaretoken: credentials.token,
   });
 

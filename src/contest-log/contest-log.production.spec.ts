@@ -18,7 +18,7 @@ describe('contest log', () => {
   describe('updateContestLog', () => {
     it('should throw an error if authentication failed', async () => {
       await expect(
-        updateContestLog(43, '2023-05-01', 10, {
+        updateContestLog(43, '2023-05-01', 10, false, {
           token: credentials.token,
           sessionId: 'badsession',
         })

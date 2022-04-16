@@ -37,9 +37,10 @@ export class KilometrikisaSession {
    * @param contestId ContestId of the contest the entry belongs to.
    * @param date Date in form of YYYY-MM-DD.
    * @param distance Distance in kilometers.
+   * @param isEbike Should the log be flagged as ebike
    */
-  updateContestLog(contestId: number, date: string, distance: number) {
-    return updateContestLog(contestId, date, distance, this.credentials);
+  updateContestLog(contestId: number, date: string, distance: number, isEbike = false) {
+    return updateContestLog(contestId, date, distance, isEbike, this.credentials);
   }
 
   /**
