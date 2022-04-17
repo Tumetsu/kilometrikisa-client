@@ -2,9 +2,12 @@
 
 [![npm version](https://badge.fury.io/js/kilometrikisa-client.svg)](https://badge.fury.io/js/kilometrikisa-client)
 
+
 A client library to scrape data from Kilometrikisa.fi website and post data to user's contest logs. Supports scraping team statistics as well
 as team member data of user's team. Inspired by the original implementation of [Strava2Kilometrikisa](https://github.com/jaamo/strava2kilometrikisa).
+
 [API Reference](https://github.com/Tumetsu/kilometrikisa-client/wiki/Exports)
+
 
 ## Features
 
