@@ -3,3 +3,4 @@ dist/
 wiki/
 docs/
 coverage/
+*.md
