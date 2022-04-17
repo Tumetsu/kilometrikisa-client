@@ -2,18 +2,17 @@
 
 [![npm version](https://badge.fury.io/js/kilometrikisa-client.svg)](https://badge.fury.io/js/kilometrikisa-client)
 
-A client library to scrape data from Kilometrikisa.fi website. Supports scraping team statistics as well
-as team member data of user's team. Inspired by the original implementation of [Strava2Kilometrikisa](https://github.com/jaamo/strava2kilometrikisa) and rewritten
-completely with Typescript.
-
+A client library to scrape data from Kilometrikisa.fi website and post data to user's contest logs. Supports scraping team statistics as well
+as team member data of user's team. Inspired by the original implementation of [Strava2Kilometrikisa](https://github.com/jaamo/strava2kilometrikisa).
 [API Reference](https://github.com/Tumetsu/kilometrikisa-client/wiki/Exports)
 
 ## Features
 
 - Login to Kilometrikisa by username and password
+- Scrape info about contests (id, name, dates etc.). Either latest contest or by contest page url
 - Scrape public team statistics from Kilometrikisa site
 - Scrape team member statistics from Kilometrikisa site (requires Kilometrikisa credentials and being part of the scraped team)
-- Update/add distance entries for logged in user
+- Update/add distance and time entries for logged in user
 
 ## Installation
 
@@ -23,7 +22,7 @@ npm install kilometrikisa-client --save
 
 ## Usage
 
-A quick example of usage:
+A quick example of usage for updating contest log of the user for the latest contest:
 
 ```
 import { getTeamStatistics, kilometrikisaSession } from 'kilometrikisa-client';
@@ -47,10 +46,12 @@ const teamData = await getTeamStatistics('team-slug');
 Team and contest slugs can be found from the kilometrikisa.fi site urls. For example
 team slug can be found from public team page's url: `https://www.kilometrikisa.fi/teams/<this-is-team-slug>/`
 Contest slug can be found from the team page url when logged in. Usually it is in form of `kilometrikisa-2022` etc.
+For more check [API Reference](https://github.com/Tumetsu/kilometrikisa-client/wiki/Exports)
+
 
 ## Development
 
-To run production tests you'll need Kilometrikisa credentials. Then copy
+To run production tests you'll need Kilometrikisa credentials. Copy
 .env.template to .env and fill in credentials:
 
 ```
