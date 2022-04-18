@@ -1,5 +1,5 @@
 /* eslint no-useless-escape: "off" */
-export function teamMemberPageMock() {
+export function teamMemberPageAsCaptainMock() {
   return `
 <!DOCTYPE html>
 <!--[if IE 8]>
@@ -380,7 +380,7 @@ export function teamMemberPageMock() {
                   
                     Tsygä Tsygäilijä
                     
-                      &nbsp;<span class="gray">(<span class="memberFullName">Tsygä Tsygäilijä</span>)</span>
+                      &nbsp;<span class="gray">(<span class="memberFullName">Tytti Fillarinen</span>)</span>
                     
                   
                 </td>
@@ -460,7 +460,7 @@ export function teamMemberPageMock() {
                     
                       Tsygä Tsygäilijä
                       
-                        &nbsp;<span class="gray">(<span class="memberFullName">Tsygä Tsygäilijä</span>)</span>
+                        &nbsp;<span class="gray">(<span class="memberFullName">Tytti Fillarinen</span>)</span>
                       
                     
                   </td>
