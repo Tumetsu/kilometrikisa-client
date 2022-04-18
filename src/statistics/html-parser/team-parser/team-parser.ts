@@ -11,7 +11,7 @@ export enum TeamSeries {
   SMALL = 'small',
   LARGE = 'large',
   POWER = 'power',
-  EBIKE = 'ebike',
+  EBIKE = 'electric',
 }
 
 export interface TeamStatistics {
