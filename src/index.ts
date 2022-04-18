@@ -2,7 +2,7 @@ import { login, LoginCredentials, SessionCredentials } from './auth/auth';
 import { KilometrikisaSession } from './KilometrikisaSession';
 
 export { KilometrikisaErrorCode, KilometrikisaError } from './utils/error-handling';
-export { getTeamStatistics } from './statistics/statistics';
+export { getTeamStatistics, getTeams } from './statistics/statistics';
 export {
   getContest,
   getContestByContestSlug,

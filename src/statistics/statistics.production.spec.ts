@@ -1,6 +1,7 @@
-import { getTeamMemberStatistics, getTeamStatistics } from './statistics';
+import { getTeams, getTeamMemberStatistics, getTeamStatistics } from './statistics';
 import { login, SessionCredentials } from '../auth/auth';
 import { getEnvCredentials } from '../utils/tests';
+import { TeamSeries } from './html-parser/team-parser/team-parser';
 
 describe('statistics', () => {
   describe('fetch team statistics from production', () => {
@@ -23,6 +24,13 @@ describe('statistics', () => {
     it('should fetch team statistics', async () => {
       const results = await getTeamStatistics('elomatic');
       expect(results.length).toBe(2);
+    });
+  });
+
+  describe('getTeams', () => {
+    it('should return list of teams', async () => {
+      const teams = await getTeams('kilometrikisa-2021', TeamSeries.SMALL);
+      expect(teams.length).toBeGreaterThan(0);
     });
   });
 });
