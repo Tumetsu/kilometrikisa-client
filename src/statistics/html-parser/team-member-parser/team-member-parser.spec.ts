@@ -1,16 +1,18 @@
 import { parseKilometrikisaTeamMemberStatistics } from './team-member-parser';
-import { teamMemberPageMock } from './kilometrikisa-team-member-page.mocks';
 import { KilometrikisaError } from '../../../utils/error-handling';
+import { teamMemberPageAsCaptainMock } from './team-member-page-as-captain.mocks';
+import { teamMemberPageNonCaptainMock } from './team-member-page-as-non-captain.mocks';
 
 describe('html-parser', () => {
   describe('team member data', () => {
     it('should return all team member data from html page', () => {
-      const result = parseKilometrikisaTeamMemberStatistics(teamMemberPageMock());
+      const result = parseKilometrikisaTeamMemberStatistics(teamMemberPageAsCaptainMock());
       expect(result.distanceStatistics).toEqual([
         {
           placement: 1,
           name: 'Testi Testersson',
-          email: null,
+          fullName: 'Testi Testersson',
+          email: 'testi.testersson@example.com',
           totalDistance: 1691,
           distanceByRegularBike: 1691,
           distanceByEbike: 0,
@@ -19,7 +21,8 @@ describe('html-parser', () => {
         {
           placement: 2,
           name: 'Paula Pyöräilijä',
-          email: null,
+          fullName: 'Paula Pyöräilijä',
+          email: 'paula.pyorailija@example.com',
           totalDistance: 1531,
           distanceByRegularBike: 844,
           distanceByEbike: 687,
@@ -28,7 +31,8 @@ describe('html-parser', () => {
         {
           placement: 3,
           name: 'Tsygä Tsygäilijä',
-          email: null,
+          fullName: 'Tytti Fillarinen',
+          email: 'tsyga@example.com',
           totalDistance: 1513,
           distanceByRegularBike: 1513,
           distanceByEbike: 0,
@@ -40,7 +44,8 @@ describe('html-parser', () => {
         {
           placement: 1,
           name: 'Testi Testersson',
-          email: null,
+          fullName: 'Testi Testersson',
+          email: 'testi.testersson@example.com',
           time: {
             hours: 79,
             minutes: 43,
@@ -50,7 +55,8 @@ describe('html-parser', () => {
         {
           placement: 2,
           name: 'Tsygä Tsygäilijä',
-          email: null,
+          fullName: 'Tytti Fillarinen',
+          email: 'tsyga@example.com',
           time: {
             hours: 74,
             minutes: 30,
@@ -60,12 +66,56 @@ describe('html-parser', () => {
         {
           placement: 3,
           name: 'Paula Pyöräilijä',
-          email: null,
+          fullName: 'Paula Pyöräilijä',
+          email: 'paula.pyorailija@example.com',
           time: {
             hours: 54,
             minutes: 0,
           },
           totalCyclingDays: 34,
+        },
+      ]);
+    });
+
+    it('should return all team member data from html page when not as a team captain', () => {
+      const result = parseKilometrikisaTeamMemberStatistics(teamMemberPageNonCaptainMock());
+      expect(result.distanceStatistics).toEqual([
+        {
+          placement: 1,
+          name: 'Tsygä Tsygäilijä',
+          totalDistance: 2060,
+          distanceByRegularBike: 2060,
+          distanceByEbike: 0,
+          totalCyclingDays: 41,
+        },
+        {
+          placement: 2,
+          name: 'Testi Testersson',
+          totalDistance: 1344,
+          distanceByRegularBike: 1344,
+          distanceByEbike: 0,
+          totalCyclingDays: 39,
+        },
+      ]);
+
+      expect(result.timeStatistics).toEqual([
+        {
+          placement: 1,
+          name: 'Tsygä Tsygäilijä',
+          time: {
+            hours: 97,
+            minutes: 14,
+          },
+          totalCyclingDays: 41,
+        },
+        {
+          placement: 2,
+          name: 'Testi Testersson',
+          time: {
+            hours: 64,
+            minutes: 29,
+          },
+          totalCyclingDays: 39,
         },
       ]);
     });
