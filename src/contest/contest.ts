@@ -75,9 +75,9 @@ export async function getLatestContest(): Promise<Contest> {
 
 /**
  * Returns all contest urls from the kilometrikisa site navigation menu.
- * Consider exposing this method via API to end users.
+ * To fetch the actual data of a single contest, use `getContest`.
  */
-async function getAllContestUrls() {
+export async function getAllContestUrls(): Promise<string[]> {
   try {
     const response = await axios.get(KILOMETRIKISA_BASE_URL);
     const $ = cheerio.load(response.data);

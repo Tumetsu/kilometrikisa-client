@@ -3,7 +3,12 @@ import { KilometrikisaSession } from './KilometrikisaSession';
 
 export { KilometrikisaErrorCode, KilometrikisaError } from './utils/error-handling';
 export { getTeamStatistics } from './statistics/statistics';
-export { getContest, getContestByContestSlug, getLatestContest } from './contest/contest';
+export {
+  getContest,
+  getContestByContestSlug,
+  getLatestContest,
+  getAllContestUrls,
+} from './contest/contest';
 export { KilometrikisaSession } from './KilometrikisaSession';
 
 // Interfaces
