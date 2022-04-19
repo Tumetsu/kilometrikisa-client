@@ -16,6 +16,7 @@ as team member data of user's team. Inspired by the original implementation of [
 - Scrape public team statistics from Kilometrikisa site
 - Scrape team member statistics from Kilometrikisa site (requires Kilometrikisa credentials and being part of the scraped team)
 - Update/add distance and time entries for logged in user
+- Fetch team data from Kilometrikisa results. Supports sorting and pagination.
 
 ## Installation
 
