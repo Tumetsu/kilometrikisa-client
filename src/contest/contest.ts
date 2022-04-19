@@ -2,6 +2,7 @@ import * as cheerio from 'cheerio';
 import axios from 'axios';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
 import { CONTEST_BASE_URL, KILOMETRIKISA_BASE_URL } from '../utils/urls';
+import { getSlugFromUrl } from '../utils/requests';
 
 export interface Contest {
   /**
@@ -135,9 +136,4 @@ function isOpen(dates: { startDate: string; endDate: string }) {
   const endMs = new Date(endDate).getTime();
 
   return startMs <= currentMs && currentMs <= endMs;
-}
-
-function getSlugFromUrl(url: string) {
-  const parts = url.split('/').filter(part => part);
-  return parts[parts.length - 1];
 }

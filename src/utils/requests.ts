@@ -35,3 +35,8 @@ export async function axiosAuthGuard(axiosRequest: Promise<AxiosResponse>) {
   }
   return response;
 }
+
+export function getSlugFromUrl(url: string) {
+  const parts = url.split('/').filter(part => part);
+  return parts[parts.length - 1];
+}
