@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio';
 import { getTableHeadings, getTableRows, transformTableToObject } from '../common';
 import { CheerioAPI } from 'cheerio';
+import { getSlugFromUrl } from '../../../utils/requests';
 
 export interface Team {
   daysPerPerson: number;
@@ -11,6 +12,7 @@ export interface Team {
   savedCO2: number;
   savedGas: number;
   teamUrl: string;
+  slug: string;
   totalDistance: number;
 }
 
@@ -31,6 +33,7 @@ export function parseContestTeamList(htmlData: string) {
     row.teamUrl = row.team.link.url;
     row.memberCount = parseInt(row.team.subItem.match(/(\d+)/)[0]);
     row.name = row.team.link.text;
+    row.slug = getSlugFromUrl(row.teamUrl);
     delete row['team'];
   });
 

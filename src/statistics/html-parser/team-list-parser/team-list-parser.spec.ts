@@ -16,6 +16,7 @@ describe('team-list parser', () => {
       savedCO2: 8592,
       savedGas: 3437,
       teamUrl: 'https://www.kilometrikisa.fi/teams/utajarven-pantterit/',
+      slug: 'utajarven-pantterit',
       totalDistance: 49111,
     });
 
