@@ -18,6 +18,8 @@ export {
   TeamMemberDistanceStatistics,
   TeamMemberTimeStatistics,
 } from './statistics/html-parser/team-member-parser/team-member-parser';
+export { Team, Pagination } from './statistics/html-parser/team-list-parser/team-list-parser';
+export { TeamListSortCriteria, TeamSortOptions } from './statistics/statistics';
 export { Contest } from './contest/contest';
 
 /**
