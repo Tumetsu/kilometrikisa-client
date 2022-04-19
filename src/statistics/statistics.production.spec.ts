@@ -29,8 +29,9 @@ describe('statistics', () => {
 
   describe('getTeams', () => {
     it('should return list of teams', async () => {
-      const teams = await getTeams('kilometrikisa-2021', TeamSeries.SMALL);
+      const { teams, pagination } = await getTeams('kilometrikisa-2021', TeamSeries.LARGE);
       expect(teams.length).toBeGreaterThan(0);
+      expect(pagination.currentPage).toEqual(1);
     });
   });
 });

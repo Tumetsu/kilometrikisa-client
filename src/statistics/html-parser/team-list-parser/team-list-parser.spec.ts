@@ -3,7 +3,7 @@ import { parseContestTeamList } from './team-list-parser';
 
 describe('team-list parser', () => {
   it('should return list of team data', () => {
-    const teams = parseContestTeamList(teamListResponseMock());
+    const { teams, pagination } = parseContestTeamList(teamListResponseMock());
     expect(teams.length).toBeGreaterThan(0);
 
     const first = teams[0];
@@ -18,5 +18,8 @@ describe('team-list parser', () => {
       teamUrl: 'https://www.kilometrikisa.fi/teams/utajarven-pantterit/',
       totalDistance: 49111,
     });
+
+    expect(pagination.currentPage).toEqual(1);
+    expect(pagination.lastPage).toEqual(53);
   });
 });

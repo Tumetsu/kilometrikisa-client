@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { getTableHeadings, getTableRows, transformTableToObject } from '../common';
+import { CheerioAPI } from 'cheerio';
 
 export interface Team {
   daysPerPerson: number;
@@ -11,6 +12,11 @@ export interface Team {
   savedGas: number;
   teamUrl: string;
   totalDistance: number;
+}
+
+export interface Pagination {
+  currentPage: number;
+  lastPage: number;
 }
 
 export function parseContestTeamList(htmlData: string) {
@@ -28,5 +34,22 @@ export function parseContestTeamList(htmlData: string) {
     delete row['team'];
   });
 
-  return result as unknown as Team[];
+  const teams = result as unknown as Team[];
+  const pagination = parsePagination($);
+
+  return {
+    teams,
+    pagination,
+  };
+}
+
+export function parsePagination($: CheerioAPI): Pagination {
+  const paginationList = $('ul.pagination');
+  const currentPage = parseInt(paginationList.find('li.current').text());
+  const pageListElements = paginationList.children();
+  const lastPage = parseInt($(pageListElements[pageListElements.length - 2]).text());
+  return {
+    currentPage,
+    lastPage,
+  };
 }

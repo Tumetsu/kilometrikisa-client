@@ -54,8 +54,9 @@ export async function getTeamMemberStatistics(
   }
 }
 
-/*
+/**
  * Sorting options supported to sort the results by in team lists.
+ * See `TeamSortOptions`
  */
 export enum TeamListSortCriteria {
   PLACEMENT = 'rank',
@@ -66,6 +67,10 @@ export enum TeamListSortCriteria {
   KETJUREAKTIO = 'ketjureaktio',
 }
 
+/**
+ * Used to define the optional sorting options for team lists
+ * requests. See `getTeams()`
+ */
 export interface TeamSortOptions {
   /**
    * Sorting criteria used when teams are requested.
@@ -82,24 +87,35 @@ export interface TeamSortOptions {
  *
  * @param contestSlug Slug of the contest. E.g. "kilometrikisa-2021"
  * @param series Contest series. Small, large etc. null value returns all teams regardless of the series.
+ * @param page Page to fetch. Should be >= 1. Defaults to first page.
  * @param sortOptions Which criteria to use for sorting.
  */
 export async function getTeams(
   contestSlug: string,
   series?: TeamSeries | null | undefined,
+  page = 1,
   sortOptions?: TeamSortOptions
 ) {
   const url = `${CONTEST_BASE_URL}${contestSlug}/teams/${series ?? ''}`;
-  const params: Record<string, string> = {};
+  const params: Record<string, string | number> = {
+    page,
+  };
 
   if (sortOptions) {
     params.sort = sortOptions.criteria;
     params.order = sortOptions.order;
   }
 
-  const response = await axios.get(url, {
-    params,
-  });
+  try {
+    const response = await axios.get(url, {
+      params,
+    });
 
-  return parseContestTeamList(response.data);
+    return parseContestTeamList(response.data);
+  } catch (err) {
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.TEAMS_NOT_FOUND,
+      `Teams for given contest ${contestSlug} could not be found. Is the contest slug correct or pagination valid?`
+    );
+  }
 }
