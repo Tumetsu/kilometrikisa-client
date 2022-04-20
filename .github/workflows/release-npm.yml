@@ -38,6 +38,7 @@ jobs:
           node-version: 16
       - run: npm install
       - run: npm run typedoc:generate
+      - run: sed -ie 's/\(Exports\#.*\)-1/\1/g' wiki/Exports.md
         # Additional steps to generate documentation in "wiki" directory
       - name: Upload Documentation to Wiki
         uses: SwiftDocOrg/github-wiki-publish-action@v1
