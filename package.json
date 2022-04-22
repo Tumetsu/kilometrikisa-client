@@ -30,7 +30,6 @@
   },
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
-    "watch": "tsc --watch --project tsconfig.build.json",
     "test": "jest --testPathIgnorePatterns .production.spec.ts",
     "test:coverage": "npm run test -- --coverage",
     "test:production": "export $(cat .env | xargs) && jest src/**/*.production.spec.ts",

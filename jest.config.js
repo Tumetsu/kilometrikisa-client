@@ -1,6 +1,5 @@
 module.exports = {
   preset: 'ts-jest',
-  testTimeout: 10000,
   testEnvironment: 'jest-environment-node',
   globals: {
     'ts-jest': {

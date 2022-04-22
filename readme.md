@@ -52,11 +52,6 @@ team slug can be found from public team page's url: `https://www.kilometrikisa.f
 Contest slug can be found from the team page url when logged in. Usually it is in form of `kilometrikisa-2022` etc.
 For more check [API Reference](https://github.com/Tumetsu/kilometrikisa-client/wiki/Exports)
 
-### Rate limiting
-To prevent accidentally making too many requests too fast, by default the client rate limits requests
-to rather conservative 10 requests / second. If you know what you are doing, you can reconfigure the 
-rate limits by using [`configureRateLimit` api](https://github.com/Tumetsu/kilometrikisa-client/wiki/Exports#configureratelimit).
-
 
 ## Development
 

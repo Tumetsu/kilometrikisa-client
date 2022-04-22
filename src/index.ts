@@ -1,6 +1,5 @@
 import { login, LoginCredentials, SessionCredentials } from './auth/auth';
 import { KilometrikisaSession } from './KilometrikisaSession';
-import { setupRateLimiter } from './rate-limit/rate-limit';
 
 export { KilometrikisaErrorCode, KilometrikisaError } from './utils/error-handling';
 export { getTeamStatistics, getTeams } from './statistics/statistics';
@@ -11,7 +10,6 @@ export {
   getAllContestUrls,
 } from './contest/contest';
 export { KilometrikisaSession } from './KilometrikisaSession';
-export { configureRateLimit } from './rate-limit/rate-limit';
 
 // Interfaces
 export { LoginCredentials, SessionCredentials } from './auth/auth';
@@ -23,8 +21,6 @@ export {
 export { Team, Pagination } from './statistics/html-parser/team-list-parser/team-list-parser';
 export { TeamListSortCriteria, TeamSortOptions } from './statistics/statistics';
 export { Contest } from './contest/contest';
-
-setupRateLimiter();
 
 /**
  * Get a client class with API-methods to access Kilometrikisa features which require authentication with user account.
