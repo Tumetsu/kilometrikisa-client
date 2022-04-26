@@ -1,6 +1,7 @@
 import axios from 'axios';
+import qs from 'qs';
 import { SessionCredentials } from '../auth/auth';
-import { axiosAuthGuard, getAuthConfig, queryStringify } from '../utils/requests';
+import { axiosAuthGuard, getAuthConfig } from '../utils/requests';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
 import {
   CONTEST_LOG,
@@ -61,7 +62,7 @@ export async function updateContestLog(
   isEbike: boolean,
   credentials: SessionCredentials
 ) {
-  const body = queryStringify({
+  const body = qs.stringify({
     contest_id: contestId,
     km_date: date,
     km_amount: distance,
@@ -98,7 +99,7 @@ export async function updateMinuteContestLog(
   isEbike: boolean,
   credentials: SessionCredentials
 ) {
-  const body = queryStringify({
+  const body = qs.stringify({
     contest_id: contestId,
     date: date,
     hours,
