@@ -19,7 +19,7 @@ export function getAuthConfig(url: string, credentials: SessionCredentials) {
 export async function axiosAuthGuard(axiosRequest: Promise<AxiosResponse>) {
   const response = await axiosRequest;
 
-  if (response.data.includes('Kirjaudu sisään')) {
+  if (typeof response.data?.includes === 'function' && response.data.includes('Kirjaudu sisään')) {
     throw new KilometrikisaError(
       KilometrikisaErrorCode.EXPIRED_SESSION,
       'Authentication of the request failed. Session expired.'
