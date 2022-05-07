@@ -21,7 +21,7 @@ import {
  * @param credentials
  */
 export async function getUserContestLogEntries(
-  contestId: string,
+  contestId: number,
   year: number,
   credentials: SessionCredentials
 ): Promise<{ date: string; distance: number }[]> {

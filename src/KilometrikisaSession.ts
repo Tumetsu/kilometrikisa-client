@@ -31,7 +31,7 @@ export class KilometrikisaSession {
    * @param contestId
    * @param year
    */
-  getUserContestLogEntries(contestId: string, year: number) {
+  getUserContestLogEntries(contestId: number, year: number) {
     return getUserContestLogEntries(contestId, year, this.credentials);
   }
 
