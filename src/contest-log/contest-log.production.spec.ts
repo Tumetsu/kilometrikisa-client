@@ -1,5 +1,11 @@
 import { login, SessionCredentials } from '../auth/auth';
-import { getUserContestLogEntries, updateContestLog, updateMinuteContestLog } from './contest-log';
+import {
+  getUserContestLogEntries,
+  incrementContestLog,
+  incrementMinuteContestLog,
+  updateContestLog,
+  updateMinuteContestLog,
+} from './contest-log';
 import { KilometrikisaErrorCode } from '../utils/error-handling';
 import { getEnvCredentials } from '../utils/tests';
 
@@ -11,8 +17,18 @@ describe('contest log', () => {
   });
 
   it("should fetch user's distance entries", async () => {
-    const results = await getUserContestLogEntries('45', 2021, credentials);
+    const results = await getUserContestLogEntries(47, 2022, credentials);
     expect(results.length).toBeGreaterThan(0);
+  });
+
+  describe.skip('incrementContestLog', () => {
+    it('should increment kilometers for given day', async () => {
+      await incrementContestLog(47, '2022-05-07', 1, false, credentials);
+    });
+
+    it('should increment minutes for given day', async () => {
+      await incrementMinuteContestLog(47, '2022-05-04', 0, 1, false, credentials);
+    });
   });
 
   describe('updateContestLog', () => {

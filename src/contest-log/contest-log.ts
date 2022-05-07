@@ -1,5 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
+import { DateTime } from 'luxon';
 import { SessionCredentials } from '../auth/auth';
 import { axiosAuthGuard, getAuthConfig } from '../utils/requests';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../utils/error-handling';
@@ -7,8 +8,19 @@ import {
   CONTEST_LOG,
   CONTEST_LOG_LIST_URL,
   CONTEST_LOG_SAVE_URL,
+  CONTEST_MINUTE_LOG_LIST_URL,
   MINUTE_CONTEST_LOG_SAVE_URL,
 } from '../utils/urls';
+
+export interface KilometrikisaDistanceRecord {
+  date: string;
+  distance: number;
+}
+export interface KilometrikisaMinuteRecord {
+  date: string;
+  hours: number;
+  minutes: number;
+}
 
 /**
  * Return daily logged data for the user in specified contest in specified year.
@@ -44,6 +56,33 @@ export async function getUserContestLogEntries(
     }
     throw err;
   }
+/**
+ * Increment daily distance for given date. Sums the previously saved distance to the
+ * given distance. If `isEbike` is set true, the total distance of the day will be marked
+ * as ebike distance. Kilometrikisa has no way to separate ebike and regular bike distance
+ * values for single day.
+ *
+ * @param contestId
+ * @param date
+ * @param distance
+ * @param isEbike
+ * @param credentials
+ */
+export async function incrementContestLog(
+  contestId: number,
+  date: string,
+  distance: number,
+  isEbike: boolean,
+  credentials: SessionCredentials
+) {
+  const existingLogForDate = (await fetchExistingLogForDate(
+    contestId,
+    'distance',
+    date,
+    credentials
+  )) as KilometrikisaDistanceRecord;
+  const incrementedValue = existingLogForDate.distance + distance;
+  await updateContestLog(contestId, date, incrementedValue, isEbike, credentials);
 }
 
 /**
@@ -119,6 +158,48 @@ export async function updateMinuteContestLog(
   }
 }
 
+/**
+ * Increment daily minutes for given date. Sums the previously saved duration to the
+ * given duration. If `isEbike` is set true, the total duration of the day will be marked
+ * as ebike duration. Kilometrikisa has no way to separate ebike and regular bike duration
+ * values for single day.
+ *
+ * @param contestId
+ * @param date
+ * @param hours
+ * @param minutes
+ * @param isEbike
+ * @param credentials
+ */
+export async function incrementMinuteContestLog(
+  contestId: number,
+  date: string,
+  // TODO: Use only minutes in the API?
+  hours: number,
+  minutes: number,
+  isEbike: boolean,
+  credentials: SessionCredentials
+) {
+  const existingLogForDate = (await fetchExistingLogForDate(
+    contestId,
+    'minute',
+    date,
+    credentials
+  )) as KilometrikisaMinuteRecord;
+
+  // TODO: This WONT WORK! User could input something which would result to 3 hours and 75 minutes
+  const incrementedHours = existingLogForDate.hours + hours;
+  const incrementedMinutes = existingLogForDate.minutes + minutes;
+  await updateMinuteContestLog(
+    contestId,
+    date,
+    incrementedHours,
+    incrementedMinutes,
+    isEbike,
+    credentials
+  );
+}
+
 function handleAxiosError(err: unknown) {
   if (axios.isAxiosError(err)) {
     const { response } = err;
@@ -135,5 +216,106 @@ function handleAxiosError(err: unknown) {
         'Could not find contest log to update. Is contestId correct?'
       );
     }
+  }
+}
+
+/**
+ * Fetch log for a single date and verify that the given parameters make sense
+ * and that we actually return something useful for the given date.
+ *
+ * @param contestId
+ * @param logType
+ * @param date
+ * @param credentials
+ */
+async function fetchExistingLogForDate(
+  contestId: number,
+  logType: 'distance' | 'minute',
+  date: string,
+  credentials: SessionCredentials
+): Promise<KilometrikisaDistanceRecord | KilometrikisaMinuteRecord> {
+  const start = DateTime.fromISO(date).setZone('Europe/Helsinki');
+  const end = start.endOf('day');
+
+  if (start > DateTime.now()) {
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.CONTEST_LOG_ENTRY_DATE_IN_FUTURE,
+      'Given date is in future.'
+    );
+  }
+
+  const existingLogForDate = await fetchUserContestLogs(
+    contestId,
+    logType,
+    start.toMillis(),
+    end.toMillis(),
+    credentials
+  );
+
+  if (!existingLogForDate.length) {
+    throw new KilometrikisaError(
+      KilometrikisaErrorCode.CONTEST_LOG_ENTRY_FOR_DATE_NOT_FOUND,
+      'Could not find entry for the given date. Is the given date out of the range of the competition dates?'
+    );
+  }
+
+  return existingLogForDate[0];
+}
+
+/**
+ * Fetch minute or distance logs for given time range.
+ *
+ * @param contestId
+ * @param logType
+ * @param start
+ * @param end
+ * @param credentials
+ */
+async function fetchUserContestLogs(
+  contestId: number,
+  logType: 'distance' | 'minute',
+  start: number,
+  end: number,
+  credentials: SessionCredentials
+): Promise<KilometrikisaDistanceRecord[] | KilometrikisaMinuteRecord[]> {
+  const url = `${
+    logType === 'minute' ? CONTEST_MINUTE_LOG_LIST_URL : CONTEST_LOG_LIST_URL
+  }${contestId}/?start=${Math.floor(start / 1000)}&end=${Math.floor(end / 1000)}`;
+  try {
+    const response = await axiosAuthGuard(axios.get(url, getAuthConfig(url, credentials)));
+    return response.data.map(
+      ({
+        start,
+        title,
+        hours,
+        minutes,
+      }: {
+        start: string;
+        title: string;
+        hours: string;
+        minutes: string;
+      }) => {
+        if (hours !== undefined) {
+          return {
+            date: start,
+            hours: parseInt(hours),
+            minutes: parseInt(minutes),
+          };
+        } else {
+          return {
+            date: start,
+            distance: parseFloat(title),
+          };
+        }
+      }
+    );
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      throw new KilometrikisaError(
+        KilometrikisaErrorCode.USER_CONTEST_LOG_NOT_FOUND,
+        'Server responded with an error. Are the contestId and year valid?'
+      );
+    }
+    throw err;
   }
 }
