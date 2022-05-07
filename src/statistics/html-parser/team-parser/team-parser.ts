@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { KilometrikisaError, KilometrikisaErrorCode } from '../../../utils/error-handling';
+import { parseFloatString } from '../common';
 import { CheerioAPI } from 'cheerio';
 
 interface DataValuePair {
@@ -110,7 +111,7 @@ const stringTitlesToKeys: Record<string, string> = {
 function convertDataToTypedObject(pairs: DataValuePair[]) {
   function extractValue(valueAndUnit: string) {
     const [value] = valueAndUnit.split(' ');
-    const parsed = value ? parseFloat(value) : undefined;
+    const parsed = value ? parseFloatString(value) : undefined;
     return !Number.isNaN(parsed) ? parsed : null;
   }
 

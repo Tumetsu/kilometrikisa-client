@@ -8,8 +8,8 @@ describe('team-list parser', () => {
 
     const first = teams[0];
     expect(first).toEqual({
-      daysPerPerson: 143,
-      distancePerPerson: 9822,
+      daysPerPerson: 143.8,
+      distancePerPerson: 9822.2,
       memberCount: 5,
       name: 'Utajärven Pantterit',
       placement: 1,
