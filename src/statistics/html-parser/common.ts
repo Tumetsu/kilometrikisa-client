@@ -116,7 +116,7 @@ export function transformTableToObject(
     }
 
     // Then it is either number or a string
-    const number = parseFloat(value);
+    const number = parseFloatString(value);
     if (Number.isNaN(number)) {
       return value;
     }
@@ -149,4 +149,9 @@ function parseTimeString(text: string) {
     hours,
     minutes,
   };
+}
+
+export function parseFloatString(text: string): number {
+  // In Finnish locale, decimal separator is the comma
+  return parseFloat(text.replace(',', '.'));
 }
