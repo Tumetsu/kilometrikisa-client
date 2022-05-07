@@ -36,26 +36,20 @@ export async function getUserContestLogEntries(
   contestId: number,
   year: number,
   credentials: SessionCredentials
-): Promise<{ date: string; distance: number }[]> {
-  const start = new Date(year, 1, 1).getTime() / 1000;
-  const end = new Date(year, 12, 30).getTime() / 1000;
-  const url = `${CONTEST_LOG_LIST_URL}${contestId}/?start=${start}&end=${end}`;
+): Promise<KilometrikisaDistanceRecord[]> {
+  const start = DateTime.fromISO(`${year}-01-01`).setZone('Europe/Helsinki');
+  const end = start.endOf('year');
+  return fetchUserContestLogs(
+    contestId,
+    'distance',
+    start.toMillis(),
+    end.toMillis(),
+    credentials
+  ) as Promise<KilometrikisaDistanceRecord[]>;
+}
 
-  try {
-    const response = await axiosAuthGuard(axios.get(url, getAuthConfig(url, credentials)));
-    return response.data.map(({ start, title }: { start: string; title: string }) => ({
-      date: start,
-      distance: parseFloat(title),
-    }));
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      throw new KilometrikisaError(
-        KilometrikisaErrorCode.USER_CONTEST_LOG_NOT_FOUND,
-        'Server responded with an error. Are the contestId and year valid?'
-      );
-    }
-    throw err;
-  }
+// TODO: Add method to fetch minute log data
+
 /**
  * Increment daily distance for given date. Sums the previously saved distance to the
  * given distance. If `isEbike` is set true, the total distance of the day will be marked
