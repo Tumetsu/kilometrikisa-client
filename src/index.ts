@@ -13,6 +13,7 @@ export { KilometrikisaSession } from './KilometrikisaSession';
 
 // Interfaces
 export { LoginCredentials, SessionCredentials } from './auth/auth';
+export { KilometrikisaDistanceRecord, KilometrikisaMinuteRecord } from './contest-log/contest-log';
 export { TeamStatistics, TeamSeries } from './statistics/html-parser/team-parser/team-parser';
 export {
   TeamMemberDistanceStatistics,

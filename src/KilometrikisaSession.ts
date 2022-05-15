@@ -2,6 +2,8 @@ import { isSessionValid, logout, SessionCredentials } from './auth/auth';
 import { getTeamMemberStatistics } from './statistics/statistics';
 import {
   getUserContestLogEntries,
+  incrementContestLog,
+  incrementMinuteContestLog,
   updateContestLog,
   updateMinuteContestLog,
 } from './contest-log/contest-log';
@@ -31,7 +33,7 @@ export class KilometrikisaSession {
    * @param contestId
    * @param year
    */
-  getUserContestLogEntries(contestId: string, year: number) {
+  getUserContestLogEntries(contestId: number, year: number) {
     return getUserContestLogEntries(contestId, year, this.credentials);
   }
 
@@ -45,6 +47,21 @@ export class KilometrikisaSession {
    */
   updateContestLog(contestId: number, date: string, distance: number, isEbike = false) {
     return updateContestLog(contestId, date, distance, isEbike, this.credentials);
+  }
+
+  /**
+   * Increment daily distance for given date. Sums the previously saved distance to the
+   * given distance. If `isEbike` is set true, the total distance of the day will be marked
+   * as ebike distance. Kilometrikisa has no way to separate ebike and regular bike distance
+   * values for single day.
+   *
+   * @param contestId
+   * @param date
+   * @param distance
+   * @param isEbike
+   */
+  incrementContestLog(contestId: number, date: string, distance: number, isEbike: boolean) {
+    return incrementContestLog(contestId, date, distance, isEbike, this.credentials);
   }
 
   /**
@@ -64,6 +81,28 @@ export class KilometrikisaSession {
     isEbike = false
   ) {
     return updateMinuteContestLog(contestId, date, hours, minutes, isEbike, this.credentials);
+  }
+
+  /**
+   * Increment daily minutes for given date. Sums the previously saved duration to the
+   * given duration. If `isEbike` is set true, the total duration of the day will be marked
+   * as ebike duration. Kilometrikisa has no way to separate ebike and regular bike duration
+   * values for single day.
+   *
+   * @param contestId
+   * @param date
+   * @param hours
+   * @param minutes
+   * @param isEbike
+   */
+  incrementMinuteContestLog(
+    contestId: number,
+    date: string,
+    hours: number,
+    minutes: number,
+    isEbike: boolean
+  ) {
+    return incrementMinuteContestLog(contestId, date, hours, minutes, isEbike, this.credentials);
   }
 
   /**
